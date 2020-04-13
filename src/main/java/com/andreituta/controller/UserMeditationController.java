@@ -36,8 +36,9 @@ public class UserMeditationController {
     private UserMeditationRepository userMeditationRepository;
     // Constants
     private final String INVALID_CRED = "No param passed. Nothing has been executed";
+    private final String ENDPOINT = "/api/meditations/users";
 
-    @RequestMapping(value = "/api/meditations/users/{userId}/meditations/{meditationId}", method = RequestMethod.POST)
+    @RequestMapping(value = ENDPOINT + "/{userId}/meditations/{meditationId}", method = RequestMethod.POST)
     @ResponseBody
     public String addMeditation(@PathVariable(value = "meditationId") final String meditationId, @PathVariable(value = "userId") final String userId) {
         if (!StringUtils.isEmpty(meditationId) && !StringUtils.isEmpty(userId)) {
@@ -57,7 +58,7 @@ public class UserMeditationController {
         return INVALID_CRED;
     }
 
-    @RequestMapping(value = "/api/meditations/users/{userId}/meditations", method = RequestMethod.GET)
+    @RequestMapping(value = ENDPOINT + "/{userId}/meditations", method = RequestMethod.GET)
     @ResponseBody
     public String fetchUserMeditations(@PathVariable(value = "userId") String userId, @RequestParam boolean selectAvailable) {
         if (!StringUtils.isEmpty(userId)) {
@@ -79,7 +80,7 @@ public class UserMeditationController {
         return INVALID_CRED;
     }
 
-    @RequestMapping(value = "/api/meditations/users/{userId}/meditations/{meditationId}", method = RequestMethod.GET)
+    @RequestMapping(value = ENDPOINT + "/{userId}/meditations/{meditationId}", method = RequestMethod.GET)
     @ResponseBody
     public String fetchUserSpecificMeditation(@PathVariable(value = "meditationId") final String meditationId, @PathVariable(value = "userId") final String userId) {
         if (!StringUtils.isEmpty(meditationId) && !StringUtils.isEmpty(userId)) {

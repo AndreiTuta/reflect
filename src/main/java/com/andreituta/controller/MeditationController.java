@@ -33,8 +33,9 @@ public class MeditationController {
     private MeditationRepository meditationRepository;
     // Constants
     private final String INVALID_CRED = "No param passed. Nothing has been executed";
-    
-    @RequestMapping(value = "/api/meditations", method = RequestMethod.POST)
+    private final String ENDPOINT = "/api/meditations";
+
+    @RequestMapping(value = ENDPOINT, method = RequestMethod.POST)
     @ResponseBody
     public String addMeditation(@RequestParam final String meditationName, @RequestParam final String meditationDuration, @RequestParam final boolean isAvailable) {
         if (!StringUtils.isEmpty(meditationName)) {
@@ -46,10 +47,10 @@ public class MeditationController {
             return "Saved meditation " + meditation.toString();
         }
         return INVALID_CRED;
-        
+
     }
-    
-    @RequestMapping(value = "/api/meditations/{meditationName}", method = RequestMethod.GET)
+
+    @RequestMapping(value = ENDPOINT + "/{meditationName}", method = RequestMethod.GET)
     @ResponseBody
     public String fetchMeditation(@PathVariable(value = "meditationName") String meditationName) {
         if (!StringUtils.isEmpty(meditationName)) {
@@ -63,8 +64,8 @@ public class MeditationController {
         }
         return INVALID_CRED;
     }
-    
-    @RequestMapping(value = "/api/meditations/{id}", method = RequestMethod.PUT)
+
+    @RequestMapping(value = ENDPOINT + "/{id}", method = RequestMethod.PUT)
     @ResponseBody
     public String udpateMeditation(@PathVariable(value = "id") final String id, @RequestParam final String meditationName, @RequestParam final String meditationDuration, @RequestParam final boolean isAvailable) {
         if (!StringUtils.isEmpty(id)) {

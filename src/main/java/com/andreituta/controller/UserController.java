@@ -22,8 +22,9 @@ public class UserController {
     private SecurityUtil securityUtil;
     // Constants
     private final String INVALID_CRED = "No params passed. Nothing has been executed";
+    private final String ENDPOINT = "/api/user";
 
-    @RequestMapping(value = "/api/user", method = RequestMethod.POST)
+    @RequestMapping(value = ENDPOINT, method = RequestMethod.POST)
     @ResponseBody
     public String addUsers(@RequestParam final String username, @RequestParam final String password) {
         if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
@@ -37,7 +38,7 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/api/user/{username}/{password}", method = RequestMethod.GET)
+    @RequestMapping(value = ENDPOINT + "/{username}/{password}", method = RequestMethod.GET)
     @ResponseBody
     public String logUsers(@PathVariable(value = "username") final String username, @PathVariable(value = "password") final String password) {
         if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
@@ -52,7 +53,7 @@ public class UserController {
         return INVALID_CRED;
     }
 
-    @RequestMapping(value = "/api/user/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = ENDPOINT + "/{id}", method = RequestMethod.PUT)
     @ResponseBody
     public String udpateUsers(@PathVariable(value = "id") final String id) {
         if (!StringUtils.isEmpty(id)) {
