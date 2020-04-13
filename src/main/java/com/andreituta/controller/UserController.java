@@ -3,7 +3,6 @@ package com.andreituta.controller;
 import com.andreituta.model.User;
 import com.andreituta.model.repository.UserRepository;
 import com.andreituta.model.security.SecurityUtil;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +21,7 @@ public class UserController {
     @Autowired
     private SecurityUtil securityUtil;
     // Constants
-    private final String INVALID_CRED = "No username/ password passed. Nothing has been executed";
+    private final String INVALID_CRED = "No params passed. Nothing has been executed";
 
     @RequestMapping(value = "/api/user", method = RequestMethod.POST)
     @ResponseBody
