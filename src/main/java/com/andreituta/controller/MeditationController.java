@@ -11,6 +11,7 @@ import com.andreituta.model.repository.MeditationRepository;
 import com.andreituta.model.repository.UserRepository;
 import com.andreituta.model.security.SecurityUtil;
 import java.util.stream.StreamSupport;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -25,40 +26,60 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author at
  */
 @Controller
+@Slf4j
 public class MeditationController {
+
     @Autowired
     private MeditationRepository meditationRepository;
     // Constants
     private final String INVALID_CRED = "No param passed. Nothing has been executed";
-
+    
     @RequestMapping(value = "/api/meditations", method = RequestMethod.POST)
     @ResponseBody
-    public String addUsers(@RequestParam final String meditationName) {
+    public String addMeditation(@RequestParam final String meditationName, @RequestParam final String meditationDuration, @RequestParam final boolean isAvailable) {
         if (!StringUtils.isEmpty(meditationName)) {
             Meditation meditation = new Meditation();
             meditation.setName(meditationName);
+            meditation.setDuration(meditationDuration);
+            meditation.setAvailable(isAvailable);
             meditationRepository.save(meditation);
-            return "Saved meditation " + meditation.getName();
+            return "Saved meditation " + meditation.toString();
         }
         return INVALID_CRED;
-
+        
     }
-
-//    @RequestMapping(value = "/api/user/{username}/{password}", method = RequestMethod.GET)
-//    @ResponseBody
-//    public String logUsers(@PathVariable(value = "username") final String username, @PathVariable(value = "password") final String password) {
-//        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-//            
-//        }
-//        return INVALID_CRED;
-//    }
-//
-//    @RequestMapping(value = "/api/user/{id}", method = RequestMethod.PUT)
-//    @ResponseBody
-//    public String udpateUsers(@PathVariable(value = "id") final String id) {
-//        if (!StringUtils.isEmpty(id)) {
-//           
-//        }
-//        return INVALID_CRED;
-//    }
+    
+    @RequestMapping(value = "/api/meditations/{meditationName}", method = RequestMethod.GET)
+    @ResponseBody
+    public String fetchMeditation(@PathVariable(value = "meditationName") String meditationName) {
+        if (!StringUtils.isEmpty(meditationName)) {
+            Meditation meditation = StreamSupport.stream(meditationRepository.findAll().spliterator(), false)
+                    .filter(med -> med.getName().equals(meditationName)).findAny().orElse(null);
+            if (meditation != null) {
+                return "Retrieved meditation: " + meditation.getName();
+            } else {
+                return "Failed returning a meditation for provided params.";
+            }
+        }
+        return INVALID_CRED;
+    }
+    
+    @RequestMapping(value = "/api/meditations/{id}", method = RequestMethod.PUT)
+    @ResponseBody
+    public String udpateMeditation(@PathVariable(value = "id") final String id, @RequestParam final String meditationName, @RequestParam final String meditationDuration, @RequestParam final boolean isAvailable) {
+        if (!StringUtils.isEmpty(id)) {
+            Meditation meditation = meditationRepository.findOne(Integer.valueOf(id));
+            if (meditation != null) {
+                log.debug("Updating meditation {}", meditation.getId());
+                meditation.setName(meditationName);
+                meditation.setDuration(meditationDuration);
+                meditation.setAvailable(isAvailable);
+                meditationRepository.save(meditation);
+                return "Updated meditation: " + meditation.getName();
+            } else {
+                return "Failed returning a user for provided credentials.";
+            }
+        }
+        return INVALID_CRED;
+    }
 }
