@@ -13,8 +13,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ *
+ * @author at
+ */
 @Entity
-@Table(name = "user")
+@Table(name = "rft_user")
 @Data
 @Getter
 @NoArgsConstructor
