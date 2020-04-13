@@ -1,4 +1,3 @@
-
 package com.andreituta.model.repository;
 
 import com.andreituta.model.Meditation;

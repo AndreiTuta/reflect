@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.andreituta.controller;
 
 import com.andreituta.model.Meditation;
@@ -12,6 +7,8 @@ import com.andreituta.model.repository.MeditationRepository;
 import com.andreituta.model.repository.UserMeditationRepository;
 import com.andreituta.model.repository.UserRepository;
 import com.andreituta.model.security.SecurityUtil;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,38 +37,9 @@ public class UserMeditationController {
     // Constants
     private final String INVALID_CRED = "No param passed. Nothing has been executed";
 
-//    @RequestMapping(value = "/api/meditations", method = RequestMethod.POST)
-//    @ResponseBody
-//    public String addMeditation(@RequestParam final String meditationName, @RequestParam final String meditationDuration, @RequestParam final boolean isAvailable) {
-//        if (!StringUtils.isEmpty(meditationName)) {
-//            Meditation meditation = new Meditation();
-//            meditation.setName(meditationName);
-//            meditation.setDuration(meditationDuration);
-//            meditation.setAvailable(isAvailable);
-//            meditationRepository.save(meditation);
-//            return "Saved meditation " + meditation.toString();
-//        }
-//        return INVALID_CRED;
-//        
-//    }
-//    
-//    @RequestMapping(value = "/api/meditations/{meditationName}", method = RequestMethod.GET)
-//    @ResponseBody
-//    public String fetchMeditation(@PathVariable(value = "meditationName") String meditationName) {
-//        if (!StringUtils.isEmpty(meditationName)) {
-//            Meditation meditation = StreamSupport.stream(meditationRepository.findAll().spliterator(), false)
-//                    .filter(med -> med.getName().equals(meditationName)).findAny().orElse(null);
-//            if (meditation != null) {
-//                return "Retrieved meditation: " + meditation.getName();
-//            } else {
-//                return "Failed returning a meditation for provided params.";
-//            }
-//        }
-//        return INVALID_CRED;
-//    }
-    @RequestMapping(value = "/api/meditations/{meditationId}/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/meditations/users/{userId}/meditations/{meditationId}", method = RequestMethod.POST)
     @ResponseBody
-    public String udpateMeditation(@PathVariable(value = "meditationId") final String meditationId, @PathVariable(value = "userId") final String userId) {
+    public String addMeditation(@PathVariable(value = "meditationId") final String meditationId, @PathVariable(value = "userId") final String userId) {
         if (!StringUtils.isEmpty(meditationId) && !StringUtils.isEmpty(userId)) {
             Meditation meditation = meditationRepository.findOne(Integer.valueOf(meditationId));
             User user = userRepository.findOne(Integer.valueOf(userId));
@@ -83,7 +51,44 @@ public class UserMeditationController {
                 userMeditationRepository.save(userMeditation);
                 return "Updated meditation: " + meditation.getName();
             } else {
-                return "Failed returning a user for provided credentials.";
+                return "Failed returning a user/ meditation for provided credentials.";
+            }
+        }
+        return INVALID_CRED;
+    }
+
+    @RequestMapping(value = "/api/meditations/users/{userId}/meditations", method = RequestMethod.GET)
+    @ResponseBody
+    public String fetchUserMeditations(@PathVariable(value = "userId") String userId, @RequestParam boolean selectAvailable) {
+        if (!StringUtils.isEmpty(userId)) {
+            User user = userRepository.findOne(Integer.valueOf(userId));
+            if (user != null) {
+                if (selectAvailable) {
+                    List<Meditation> availableMeditations = StreamSupport.stream(meditationRepository.findAll().spliterator(), false)
+                            .filter(med -> med.isAvailable()).collect(Collectors.toList());
+                    return "Available: " + availableMeditations.size();
+                } else {
+                    List<UserMeditation> userMeditations = StreamSupport.stream(userMeditationRepository.findAll().spliterator(), false)
+                            .filter(med -> user.getId() == med.getUserId()).collect(Collectors.toList());
+                    return "Done: " + userMeditations.size();
+                }
+            } else {
+                return "Failed returning a user for provided params.";
+            }
+        }
+        return INVALID_CRED;
+    }
+
+    @RequestMapping(value = "/api/meditations/users/{userId}/meditations/{meditationId}", method = RequestMethod.GET)
+    @ResponseBody
+    public String fetchUserSpecificMeditation(@PathVariable(value = "meditationId") final String meditationId, @PathVariable(value = "userId") final String userId) {
+        if (!StringUtils.isEmpty(meditationId) && !StringUtils.isEmpty(userId)) {
+            UserMeditation userMeditation = StreamSupport.stream(userMeditationRepository.findAll().spliterator(), false)
+                    .filter(userMed -> userMed.getId() == Integer.valueOf(meditationId) && userMed.getUserId() == Integer.valueOf(userId)).findAny().orElse(null);
+            if (userMeditation != null) {
+                return "Retrieved meditation: " + userMeditation.toString();
+            } else {
+                return "Failed returning a user/ meditation for provided credentials.";
             }
         }
         return INVALID_CRED;

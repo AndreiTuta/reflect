@@ -1,7 +1,3 @@
-/*
- * Here comes the text of your license
- * Each line should be prefixed with  * 
- */
 package com.andreituta.model;
 
 import javax.persistence.Column;
