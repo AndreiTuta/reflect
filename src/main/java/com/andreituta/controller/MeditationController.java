@@ -1,10 +1,7 @@
 package com.andreituta.controller;
 
 import com.andreituta.model.Meditation;
-import com.andreituta.model.User;
 import com.andreituta.model.repository.MeditationRepository;
-import com.andreituta.model.repository.UserRepository;
-import com.andreituta.model.security.SecurityUtil;
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

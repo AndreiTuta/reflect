@@ -6,7 +6,6 @@ import com.andreituta.model.UserMeditation;
 import com.andreituta.model.repository.MeditationRepository;
 import com.andreituta.model.repository.UserMeditationRepository;
 import com.andreituta.model.repository.UserRepository;
-import com.andreituta.model.security.SecurityUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
