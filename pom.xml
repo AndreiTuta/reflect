@@ -15,7 +15,7 @@
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.andreituta.App</start-class>
+        <start-class>com.at.reflect.App</start-class>
         <java.version>1.8</java.version>
     </properties>
     <dependencies>

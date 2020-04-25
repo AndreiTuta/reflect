@@ -1,6 +1,6 @@
 package com.at.reflect.model.repository;
 
-import com.at.reflect.model.entities.User;
+import com.at.reflect.model.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
 /**

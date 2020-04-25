@@ -1,6 +1,6 @@
 package com.at.reflect.model.email.repository;
 
-import com.at.reflect.model.entities.Email;
+import com.at.reflect.model.entity.Email;
 import org.springframework.data.repository.CrudRepository;
 
 /**

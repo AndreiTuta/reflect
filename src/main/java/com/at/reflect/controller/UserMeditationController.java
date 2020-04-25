@@ -1,8 +1,8 @@
 package com.at.reflect.controller;
 
-import com.at.reflect.model.entities.Meditation;
-import com.at.reflect.model.entities.User;
-import com.at.reflect.model.entities.UserMeditation;
+import com.at.reflect.model.entity.Meditation;
+import com.at.reflect.model.entity.User;
+import com.at.reflect.model.entity.UserMeditation;
 import com.at.reflect.model.repository.MeditationRepository;
 import com.at.reflect.model.repository.UserMeditationRepository;
 import com.at.reflect.model.repository.UserRepository;

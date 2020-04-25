@@ -1,6 +1,6 @@
 package com.at.reflect.controller;
 
-import com.at.reflect.model.entities.Email;
+import com.at.reflect.model.entity.Email;
 import com.at.reflect.model.email.repository.EmailRepository;
 import org.springframework.web.util.HtmlUtils;
 import java.util.stream.StreamSupport;
@@ -27,7 +27,7 @@ public class EmailController
     private EmailRepository emailRepository;
     // Constants
     private final String INVALID_CRED = "No param passed. Nothing has been executed";
-    private final String ENDPOINT = "/api/emails";
+    private final String ENDPOINT = "/api/emails/";
 
     @RequestMapping(value = ENDPOINT, method = RequestMethod.POST)
     @ResponseBody
@@ -37,28 +37,24 @@ public class EmailController
     {
         if (!StringUtils.isEmpty(emailBody))
         {
-            Email email = new Email();
-            email.setEmailBody(HtmlUtils.htmlEscape(emailBody));
-            email.setEmailType(emailType);
-            email.setTemplate(isTemplate);
-            emailRepository.save(email);
+            Email email = updateEmail(0, emailBody, emailType, isTemplate);
             return "Saved email " + email.toString();
         }
         return INVALID_CRED;
 
     }
 
-    @RequestMapping(value = ENDPOINT + "/{emailType}", method = RequestMethod.GET)
+    @RequestMapping(value = ENDPOINT + "{emailType}", method = RequestMethod.GET)
     @ResponseBody
     public String fetchEmail(@PathVariable(value = "emailType") String emailType)
     {
         if (!StringUtils.isEmpty(emailType))
         {
             Email email = StreamSupport.stream(emailRepository.findAll().spliterator(), false)
-                    .filter(med -> med.getEmailType().equals(emailType)).findAny().orElse(null);
+                    .filter(em -> em.getEmailType().equals(emailType)).findAny().orElse(null);
             if (email != null)
             {
-                return "Retrieved email: " + email.getEmailType();
+                return "Retrieved email: " + email.toString();
             } else
             {
                 return "Failed returning a email for provided params.";
@@ -67,25 +63,40 @@ public class EmailController
         return INVALID_CRED;
     }
 
-    @RequestMapping(value = ENDPOINT + "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = ENDPOINT + "{id}", method = RequestMethod.PUT)
     @ResponseBody
     public String udpateEmail(@PathVariable(value = "id") final String id,
-            @RequestParam final String emailName,
-            @RequestParam final String emailDuration,
-            @RequestParam final boolean isAvailable)
+            @RequestParam final String emailBody,
+            @RequestParam final String emailType,
+            @RequestParam final boolean isTemplate)
     {
         if (!StringUtils.isEmpty(id))
         {
             Email email = emailRepository.findOne(Integer.valueOf(id));
             if (email != null)
             {
-                emailRepository.save(email);
-                return "Updated email: " + email.getEmailType();
+                Email updatedEmail = updateEmail(email.getId(), emailBody, emailType, isTemplate);
+                return "Updated email: " + updatedEmail.toString();
             } else
             {
                 return "Failed returning a user for provided credentials.";
             }
         }
         return INVALID_CRED;
+    }
+
+    private Email updateEmail(Integer id, String emailBody, String emailType,
+            boolean template)
+    {
+        Email email = new Email();
+        if (id > 0)
+        {
+            email.setId(id);
+        }
+        email.setEmailBody(HtmlUtils.htmlEscape(emailBody));
+        email.setEmailType(emailType);
+        email.setTemplate(template);
+        emailRepository.save(email);
+        return email;
     }
 }

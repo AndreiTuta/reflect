@@ -1,6 +1,6 @@
 package com.at.reflect.controller;
 
-import com.at.reflect.model.entities.User;
+import com.at.reflect.model.entity.User;
 import com.at.reflect.model.email.util.EmailUtil;
 import com.at.reflect.model.repository.UserRepository;
 import java.util.stream.StreamSupport;

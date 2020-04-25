@@ -1,4 +1,4 @@
-package com.at.reflect.model.entities;
+package com.at.reflect.model.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

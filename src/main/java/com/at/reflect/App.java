@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 @PropertySource("classpath:application.properties")
-@EntityScan("com.at.reflect.model.entities")
+@EntityScan("com.at.reflect.model.entity")
 public class App {
 
 	public static void main(String[] args) {

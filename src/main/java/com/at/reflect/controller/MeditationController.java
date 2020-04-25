@@ -1,6 +1,6 @@
 package com.at.reflect.controller;
 
-import com.at.reflect.model.entities.Meditation;
+import com.at.reflect.model.entity.Meditation;
 import com.at.reflect.model.repository.MeditationRepository;
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
