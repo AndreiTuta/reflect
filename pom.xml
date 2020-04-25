@@ -15,7 +15,6 @@
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.andreituta.App</start-class>
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
@@ -47,7 +46,11 @@
             <artifactId>spring-security-crypto</artifactId>
             <version>5.3.1.RELEASE</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
         <dependency>
             <groupId>com.sun.activation</groupId>
             <artifactId>javax.activation</artifactId>
@@ -95,6 +98,12 @@
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>5.2.3.RELEASE</version>
             <type>jar</type>
         </dependency>
     </dependencies>
@@ -159,8 +168,8 @@
                         <configuration>
                             <target>
                                 <zip destfile="${basedir}/target/app.zip"
-                                                                     basedir="${basedir}/target"
-                                                                     includes="Dockerfile, Dockerrun.aws.json, ${project.artifactId}.jar" />
+                                     basedir="${basedir}/target"
+                                     includes="Dockerfile, Dockerrun.aws.json, ${project.artifactId}.jar" />
                             </target>
                         </configuration>
                     </execution>

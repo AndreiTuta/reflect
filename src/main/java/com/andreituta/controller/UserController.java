@@ -2,7 +2,7 @@ package com.andreituta.controller;
 
 import com.andreituta.model.User;
 import com.andreituta.model.repository.UserRepository;
-import com.andreituta.model.security.SecurityUtil;
+import com.andreituta.model.email.SecurityUtil;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
