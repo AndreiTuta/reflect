@@ -1,8 +1,8 @@
 package com.andreituta.controller;
 
 import com.andreituta.model.User;
+import com.andreituta.model.email.EmailUtil;
 import com.andreituta.model.repository.UserRepository;
-import com.andreituta.model.email.SecurityUtil;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,20 +19,27 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private SecurityUtil securityUtil;
+    private EmailUtil emailUtil;
     // Constants
     private final String INVALID_CRED = "No params passed. Nothing has been executed";
     private final String ENDPOINT = "/api/user";
 
     @RequestMapping(value = ENDPOINT, method = RequestMethod.POST)
     @ResponseBody
-    public String addUsers(@RequestParam final String username, @RequestParam final String password) {
+    public String addUsers(@RequestParam final String username, @RequestParam final String password, @RequestParam final String emailAddress) {
         if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-            User user = new User();
-            user.setName(securityUtil.encode(username));
-            user.setPassword(securityUtil.encode(password));
-            userRepository.save(user);
-            return "Adding username: " + username + " password: " + password;
+            User user = fetchUser(username, password, "");
+            if (user != null) {
+                emailUtil.sendEmail(emailAddress);
+            } else {
+                User newUser = new User();
+                newUser.setName(username);
+                newUser.setPassword(password);
+                newUser.setEmail(emailAddress);
+                userRepository.save(newUser);
+                emailUtil.sendEmail(emailAddress);
+                return "Adding username: " + username + " password: " + password;
+            }
         }
         return INVALID_CRED;
 
@@ -40,10 +47,13 @@ public class UserController {
 
     @RequestMapping(value = ENDPOINT + "/{username}/{password}", method = RequestMethod.GET)
     @ResponseBody
-    public String logUsers(@PathVariable(value = "username") final String username, @PathVariable(value = "password") final String password) {
+    public String logUsers(@PathVariable(value = "username")
+            final String username,
+            @PathVariable(value = "password")
+            final String password
+    ) {
         if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-            User user = StreamSupport.stream(userRepository.findAll().spliterator(), false)
-                    .filter(u -> securityUtil.decode(username, u.getName()) && securityUtil.decode(password, u.getPassword())).findAny().orElse(null);
+            User user = fetchUser(username, password, "");
             if (user != null) {
                 return "Retrieved username: " + user.getName() + " password: " + user.getPassword();
             } else {
@@ -55,9 +65,11 @@ public class UserController {
 
     @RequestMapping(value = ENDPOINT + "/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public String udpateUsers(@PathVariable(value = "id") final String id) {
+    public String udpateUsers(@PathVariable(value = "id")
+            final String id
+    ) {
         if (!StringUtils.isEmpty(id)) {
-            User user = userRepository.findOne(Integer.valueOf(id));
+            User user = fetchUser("", "", id);
             if (user != null) {
                 return "Retrieved username: " + user.getName() + " password: " + user.getPassword();
             } else {
@@ -65,5 +77,15 @@ public class UserController {
             }
         }
         return INVALID_CRED;
+    }
+
+    private User fetchUser(String username, String password, String id) {
+        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
+            return StreamSupport.stream(userRepository.findAll().spliterator(), false)
+                    .filter(u -> username.equals(u.getName()) && password.equals(u.getPassword())).findAny().orElse(null);
+        } else if (!StringUtils.isEmpty(id)) {
+            return userRepository.findOne(Integer.valueOf(id));
+        }
+        return null;
     }
 }
