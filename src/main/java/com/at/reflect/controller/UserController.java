@@ -1,8 +1,8 @@
-package com.andreituta.controller;
+package com.at.reflect.controller;
 
-import com.andreituta.model.User;
-import com.andreituta.model.email.EmailUtil;
-import com.andreituta.model.repository.UserRepository;
+import com.at.reflect.model.entities.User;
+import com.at.reflect.model.email.util.EmailUtil;
+import com.at.reflect.model.repository.UserRepository;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

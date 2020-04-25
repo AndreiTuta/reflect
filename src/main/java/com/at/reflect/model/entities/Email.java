@@ -1,6 +1,4 @@
-package com.andreituta.model;
-
-
+package com.at.reflect.model.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,21 +18,22 @@ import lombok.Setter;
  * @author at
  */
 @Entity
-@Table(name = "rft_meditation")
+@Table(name = "rft_email")
 @Data
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Setter
-public class Meditation {
+public class Email
+{
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "duration")
-    private String duration;
-    @Column(name = "available")
-    private boolean available;
+    @Column(name = "type")
+    private String emailType;
+    @Column(name = "email_body")
+    private String emailBody;
+    @Column(name = "template")
+    private boolean template;
 }

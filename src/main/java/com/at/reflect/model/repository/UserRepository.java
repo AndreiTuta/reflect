@@ -1,6 +1,6 @@
-package com.andreituta.model.repository;
+package com.at.reflect.model.repository;
 
-import com.andreituta.model.User;
+import com.at.reflect.model.entities.User;
 import org.springframework.data.repository.CrudRepository;
 
 /**

@@ -1,4 +1,4 @@
-package com.andreituta.model.email;
+package com.at.reflect.model.email.util;
 
 import java.util.Properties;
 import javax.mail.Message;

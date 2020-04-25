@@ -1,11 +1,11 @@
-package com.andreituta.controller;
+package com.at.reflect.controller;
 
-import com.andreituta.model.Meditation;
-import com.andreituta.model.User;
-import com.andreituta.model.UserMeditation;
-import com.andreituta.model.repository.MeditationRepository;
-import com.andreituta.model.repository.UserMeditationRepository;
-import com.andreituta.model.repository.UserRepository;
+import com.at.reflect.model.entities.Meditation;
+import com.at.reflect.model.entities.User;
+import com.at.reflect.model.entities.UserMeditation;
+import com.at.reflect.model.repository.MeditationRepository;
+import com.at.reflect.model.repository.UserMeditationRepository;
+import com.at.reflect.model.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;

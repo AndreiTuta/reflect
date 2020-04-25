@@ -1,6 +1,6 @@
-package com.andreituta.model.repository;
+package com.at.reflect.model.repository;
 
-import com.andreituta.model.UserMeditation;
+import com.at.reflect.model.entities.UserMeditation;
 import org.springframework.data.repository.CrudRepository;
 
 /**
