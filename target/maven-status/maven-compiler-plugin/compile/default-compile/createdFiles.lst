@@ -1,0 +1,12 @@
+com/andreituta/model/UserMeditation.class
+com/andreituta/controller/MeditationController.class
+com/andreituta/controller/UserMeditationController.class
+com/andreituta/model/email/EmailUtil$1.class
+com/andreituta/App.class
+com/andreituta/controller/UserController.class
+com/andreituta/model/repository/UserMeditationRepository.class
+com/andreituta/model/repository/UserRepository.class
+com/andreituta/model/Meditation.class
+com/andreituta/model/email/EmailUtil.class
+com/andreituta/model/repository/MeditationRepository.class
+com/andreituta/model/User.class

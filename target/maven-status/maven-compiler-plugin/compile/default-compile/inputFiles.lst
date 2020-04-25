@@ -1,0 +1,11 @@
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/model/repository/UserRepository.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/model/repository/UserMeditationRepository.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/controller/UserMeditationController.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/model/UserMeditation.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/App.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/model/repository/MeditationRepository.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/model/Meditation.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/model/email/EmailUtil.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/model/User.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/controller/UserController.java
+/home/at/Documents/git/springapi/src/main/java/com/andreituta/controller/MeditationController.java
