@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project name="maven-antrun-" default="main"  >
-<target name="main">
-  <zip basedir="/home/at/Documents/git/springapi/target" destfile="/home/at/Documents/git/springapi/target/app.zip" includes="Dockerfile, Dockerrun.aws.json, spring-rest.jar"/>
-</target>
-</project>
