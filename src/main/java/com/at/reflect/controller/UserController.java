@@ -58,7 +58,7 @@ public class UserController {
 			if (user != null) {
 				return ResponseEntity.ok(converToResponse(user));
 			} else {
-				return ResponseEntity.ok("Failed returning a user for provided credentials.");
+				return ResponseEntity.ok("Failed retrieving info for provided params");
 			}
 		}
 		return ResponseEntity.ok(INVALID_CRED);
@@ -76,7 +76,7 @@ public class UserController {
 				userRepository.save(user);
 				return ResponseEntity.ok(converToResponse(user));
 			} else {
-				return ResponseEntity.ok("Failed returning a user for provided credentials.");
+				return ResponseEntity.ok("Failed retrieving info for provided params");
 			}
 		}
 		return ResponseEntity.ok(INVALID_CRED);
