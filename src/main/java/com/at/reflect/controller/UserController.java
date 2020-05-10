@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +35,7 @@ public class UserController {
 		if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
 			User user = fetchUser(username, password, "");
 			if (user != null) {
-				emailUtil.sendEmail(emailAddress);
+//				emailUtil.sendEmail(emailAddress);
 			} else {
 				User newUser = new User();
 				newUser.setUsername(username);
@@ -51,10 +50,9 @@ public class UserController {
 
 	}
 
-	@GetMapping(value = "/getUser/{username}/{password}")
+	@GetMapping(value = "/getUser")
 	@ResponseBody
-	public ResponseEntity<String> logUsers(@PathVariable(value = "username") final String username,
-			@PathVariable(value = "password") final String password) {
+	public ResponseEntity<String> logUsers(@RequestParam final String username, @RequestParam final String password) {
 		if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
 			User user = fetchUser(username, password, "");
 			if (user != null) {
@@ -66,12 +64,16 @@ public class UserController {
 		return ResponseEntity.ok(INVALID_CRED);
 	}
 
-	@PutMapping(value = "/updateUser/{id}")
+	@PutMapping(value = "/updateUser")
 	@ResponseBody
-	public ResponseEntity<String> udpateUsers(@PathVariable(value = "id") final String id) {
+	public ResponseEntity<String> udpateUsers(@RequestParam final String id, @RequestParam final String newUsername,
+			@RequestParam final String newPassword) {
 		if (!StringUtils.isEmpty(id)) {
 			User user = fetchUser("", "", id);
 			if (user != null) {
+				user.setUsername(newPassword);
+				user.setPassword(newPassword);
+				userRepository.save(user);
 				return ResponseEntity.ok(converToResponse(user));
 			} else {
 				return ResponseEntity.ok("Failed returning a user for provided credentials.");
