@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable().authorizeRequests().antMatchers("/api/**").hasRole("ADMIN").and().httpBasic()
 				.realmName(REALM).authenticationEntryPoint(getBasicAuthEntryPoint()).and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);// We don't need sessions to be created.
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 
 	@Bean

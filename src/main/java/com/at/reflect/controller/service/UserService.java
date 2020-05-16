@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
-public class UserService {
+public class UserService implements Service{
 
 	@Autowired
 	private UserRepository userRepository;
@@ -56,5 +56,10 @@ public class UserService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public ServiceType getType() {
+		return ServiceType.USER;
 	}
 }

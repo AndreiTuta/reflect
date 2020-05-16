@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.at.reflect.controller.service.MeditationService;
+import com.at.reflect.controller.service.UserService;
 import com.at.reflect.model.entity.Meditation;
 import com.at.reflect.model.repository.MeditationRepository;
 
@@ -26,9 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/api/v1/meditation")
 @Slf4j
 public class MeditationController {
-
 	@Autowired
-	private MeditationRepository meditationRepository;
+	private MeditationService meditationService;
 	// Constants
 	private final String INVALID_CRED = "No param passed. Nothing has been executed";
 
@@ -37,12 +38,9 @@ public class MeditationController {
 	public ResponseEntity<String> addMeditation(@RequestParam final String meditationName,
 			@RequestParam final String meditationDuration, @RequestParam final boolean isAvailable) {
 		if (!StringUtils.isEmpty(meditationName)) {
-			Meditation meditation = new Meditation();
-			meditation.setName(meditationName);
-			meditation.setDuration(meditationDuration);
-			meditation.setAvailable(isAvailable);
-			meditationRepository.save(meditation);
-			return ResponseEntity.ok(converToResponse(meditation));
+			Meditation meditation = meditationService.createNewMeditation(meditationName, meditationDuration,
+					isAvailable);
+			return ResponseEntity.ok(meditationService.converToResponse(meditation));
 		}
 		return ResponseEntity.ok(INVALID_CRED);
 
@@ -52,10 +50,9 @@ public class MeditationController {
 	@ResponseBody
 	public ResponseEntity<String> fetchMeditation(@RequestParam final String meditationName) {
 		if (!StringUtils.isEmpty(meditationName)) {
-			Meditation meditation = StreamSupport.stream(meditationRepository.findAll().spliterator(), false)
-					.filter(med -> med.getName().equals(meditationName)).findAny().orElse(null);
+			Meditation meditation = meditationService.fetchMeditationByName(meditationName);
 			if (meditation != null) {
-				return ResponseEntity.ok(converToResponse(meditation));
+				return ResponseEntity.ok(meditationService.converToResponse(meditation));
 			} else {
 				return ResponseEntity.ok("Failed retrieving info for provided params");
 			}
@@ -66,25 +63,19 @@ public class MeditationController {
 	@PutMapping(value = "/updateMeditation")
 	@ResponseBody
 	public ResponseEntity<String> udpateMeditation(@RequestParam final String id,
-			@RequestParam final String meditationName, @RequestParam final String meditationDuration,
+			@RequestParam final String meditationName,
+			@RequestParam final String meditationDuration,
 			@RequestParam final boolean isAvailable) {
 		if (!StringUtils.isEmpty(id)) {
-			Meditation meditation = meditationRepository.findById(Integer.valueOf(id)).orElse(null);
+			Meditation meditation = meditationService.fetchMeditationById(id);
 			if (meditation != null) {
 				log.debug("Updating meditation {}", meditation.getId());
-				meditation.setName(meditationName);
-				meditation.setDuration(meditationDuration);
-				meditation.setAvailable(isAvailable);
-				meditationRepository.save(meditation);
-				return ResponseEntity.ok(converToResponse(meditation));
+				meditationService.updateMeditation(meditationName, meditationDuration, isAvailable, meditation);
+				return ResponseEntity.ok(meditationService.converToResponse(meditation));
 			} else {
 				return ResponseEntity.ok("Failed retrieving info for provided params");
 			}
 		}
 		return ResponseEntity.ok(INVALID_CRED);
-	}
-
-	private String converToResponse(Meditation meditation) {
-		return meditation.toString();
 	}
 }
