@@ -7,9 +7,9 @@ import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
+import org.thymeleaf.util.StringUtils;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,10 +42,10 @@ public class UserMeditationController {
 	// Constants
 	private final String INVALID_CRED = "No param passed. Nothing has been executed";
 
-	@PostMapping(value = "/addUserMeditation/{userId}/{meditationId}")
+	@PostMapping(value = "/addUserMeditation")
 	@ResponseBody
-	public ResponseEntity<String> addMeditation(@PathVariable(value = "meditationId") final String meditationId,
-			@PathVariable(value = "userId") final String userId) {
+	public ResponseEntity<String> addMeditation(@RequestParam final String meditationId,
+			@RequestParam final String userId) {
 		if (!StringUtils.isEmpty(meditationId) && !StringUtils.isEmpty(userId)) {
 			Meditation meditation = meditationRepository.findById(Integer.valueOf(meditationId)).orElse(null);
 			User user = userRepository.findById(Integer.valueOf(userId)).orElse(null);
@@ -57,15 +57,15 @@ public class UserMeditationController {
 				userMeditationRepository.save(userMeditation);
 				return ResponseEntity.ok(convertMeditationToResponse(userMeditation));
 			} else {
-				return ResponseEntity.ok("Failed added info for provided info.");
+				return ResponseEntity.ok("Failed retrieving info for provided params.");
 			}
 		}
 		return ResponseEntity.ok(INVALID_CRED);
 	}
 
-	@GetMapping(value = "/fetchUserMeditations/{userId}")
+	@GetMapping(value = "/fetchUserMeditations")
 	@ResponseBody
-	public ResponseEntity<String> fetchUserMeditations(@PathVariable(value = "userId") String userId,
+	public ResponseEntity<String> fetchUserMeditations(@RequestParam String userId,
 			@RequestParam boolean selectAvailable) {
 		if (!StringUtils.isEmpty(userId)) {
 			User user = userRepository.findById(Integer.valueOf(userId)).orElse(null);
@@ -82,17 +82,16 @@ public class UserMeditationController {
 					return ResponseEntity.ok(convertUserMeditationListToResponse(userMeditations));
 				}
 			} else {
-				return ResponseEntity.ok("Failed added info for provided info.");
+				return ResponseEntity.ok("Failed retrieving info for provided params.");
 			}
 		}
 		return ResponseEntity.ok(INVALID_CRED);
 	}
 
-	@GetMapping(value = "/fetchUserMeditations/{userId}/{meditationId}")
+	@GetMapping(value = "/fetchUserSpecificMeditation")
 	@ResponseBody
-	public ResponseEntity<String> fetchUserSpecificMeditation(
-			@PathVariable(value = "meditationId") final String meditationId,
-			@PathVariable(value = "userId") final String userId) {
+	public ResponseEntity<String> fetchUserSpecificMeditation(@RequestParam final String meditationId,
+			@RequestParam final String userId) {
 		if (!StringUtils.isEmpty(meditationId) && !StringUtils.isEmpty(userId)) {
 			UserMeditation userMeditation = StreamSupport
 					.stream(userMeditationRepository.findAll().spliterator(), false)
@@ -102,7 +101,7 @@ public class UserMeditationController {
 			if (userMeditation != null) {
 				return ResponseEntity.ok(convertMeditationToResponse(userMeditation));
 			} else {
-				return ResponseEntity.ok("Failed added info for provided info.");
+				return ResponseEntity.ok("Failed retrieving info for provided params.");
 			}
 		}
 		return ResponseEntity.ok(INVALID_CRED);

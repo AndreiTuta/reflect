@@ -1,15 +1,13 @@
 package com.at.reflect.model.entity;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,28 +18,23 @@ import lombok.Setter;
  * @author at
  */
 @Entity
-@Table(name = "rft_meditation")
+@Table(name = "rft_submeditation")
 @Data
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Setter
-public class Meditation {
+public class SubMeditation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private Integer id;
-	@Column(name = "available")
-	private boolean available;
+	@Column(name = "parent_meditation_id")
+	private Integer parentMeditationId;
 	@Column(name = "name")
 	private String name;
-	@Column(name = "duration")
-	private String duration;
-	@Column(name = "preview")
-	private String preview;
-	@Column(name = "address")
-	private String address;
-	@Column(name = "numMed")
-	private Integer numMed;
-	@Transient
-	private List<SubMeditation> submeditations;
+	@Column(name = "meditation_player_address")
+	private String meditationPlayerAdress;
+	@Column(name = "meditation_audio_address")
+	private String meditationAudioadress;
 }
