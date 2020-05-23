@@ -18,19 +18,25 @@ import lombok.AllArgsConstructor;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private static String REALM = "REFLECT_REALM";
+	private static final String USER = "reflect-user";
+	private static final String RAW_PASSWORD = "user1Pass";
+	private static final String ADMIN_ROLE = "ADMIN";
+	private static final String API_ALL = "/api/**";
 
 	@Autowired
 	public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().withUser("reflect-user").password(passwordEncoder().encode("user1Pass"))
-				.roles("ADMIN");
+		
+		auth.inMemoryAuthentication().withUser(USER).password(passwordEncoder().encode(RAW_PASSWORD))
+				.roles(ADMIN_ROLE);
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable().authorizeRequests().antMatchers("/api/**").hasRole("ADMIN").and().httpBasic()
+		http.csrf().disable().authorizeRequests().antMatchers(API_ALL).hasRole(ADMIN_ROLE).and().httpBasic()
 				.realmName(REALM).authenticationEntryPoint(getBasicAuthEntryPoint()).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
 	}
 
 	@Bean

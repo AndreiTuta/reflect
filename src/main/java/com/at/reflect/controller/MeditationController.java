@@ -1,22 +1,20 @@
 package com.at.reflect.controller;
 
-import java.util.stream.StreamSupport;
-
+import org.jooq.tools.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.util.StringUtils;
 
 import com.at.reflect.controller.service.MeditationService;
-import com.at.reflect.controller.service.UserService;
 import com.at.reflect.model.entity.Meditation;
-import com.at.reflect.model.repository.MeditationRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,12 +33,11 @@ public class MeditationController {
 
 	@PostMapping(value = "/addMeditation")
 	@ResponseBody
-	public ResponseEntity<String> addMeditation(@RequestParam final String meditationName,
-			@RequestParam final String meditationDuration, @RequestParam final boolean isAvailable) {
-		if (!StringUtils.isEmpty(meditationName)) {
-			Meditation meditation = meditationService.createNewMeditation(meditationName, meditationDuration,
-					isAvailable);
-			return ResponseEntity.ok(meditationService.converToResponse(meditation));
+	public ResponseEntity<String> addMeditation(@RequestBody final JSONObject meditationJson) {
+		final String medJsonString = meditationJson.toString();
+		if (!StringUtils.isEmpty(medJsonString)) {
+			String meditation = meditationService.createNewMeditation(medJsonString);
+			return ResponseEntity.ok(meditation.toString());
 		}
 		return ResponseEntity.ok(INVALID_CRED);
 
@@ -63,8 +60,7 @@ public class MeditationController {
 	@PutMapping(value = "/updateMeditation")
 	@ResponseBody
 	public ResponseEntity<String> udpateMeditation(@RequestParam final String id,
-			@RequestParam final String meditationName,
-			@RequestParam final String meditationDuration,
+			@RequestParam final String meditationName, @RequestParam final String meditationDuration,
 			@RequestParam final boolean isAvailable) {
 		if (!StringUtils.isEmpty(id)) {
 			Meditation meditation = meditationService.fetchMeditationById(id);

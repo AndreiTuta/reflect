@@ -4,7 +4,7 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.thymeleaf.util.StringUtils;
 
 import com.at.reflect.model.entity.User;
 import com.at.reflect.model.repository.UserRepository;
@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
-public class UserService implements Service{
+public class UserService implements Service {
 
 	@Autowired
 	private UserRepository userRepository;
