@@ -35,7 +35,7 @@ public class MeditationService implements Service {
 		return response;
 	}
 
-	private Meditation convertToMeditation(JsonObject newMeditation) {
+	private Meditation convertToMeditation(final JsonObject newMeditation) {
 		Meditation meditation = createNewMeditation(newMeditation.get("name"), newMeditation.get("duration"),
 				newMeditation.get("address"), newMeditation.get("preview"),
 				JsonUtil.toBoolean(newMeditation.get("isAvailable")),
@@ -62,7 +62,7 @@ public class MeditationService implements Service {
 	 * @param subMeditations
 	 * @param meditation
 	 */
-	public void saveSubMeditationsForMeditation(final List<SubMeditation> subMeditations, Meditation meditation) {
+	public void saveSubMeditationsForMeditation(final List<SubMeditation> subMeditations, final Meditation meditation) {
 		for (SubMeditation subMeditation : subMeditations) {
 			createNewSubMeditation(meditation.getId(), subMeditation.getName(),
 					subMeditation.getMeditationPlayerAdress(), subMeditation.getMeditationAudioadress());
@@ -94,7 +94,7 @@ public class MeditationService implements Service {
 		return meditation;
 	}
 
-	private List<SubMeditation> fetchSubMeditationsList(Integer id) {
+	private List<SubMeditation> fetchSubMeditationsList(final Integer id) {
 		List<SubMeditation> meditationSubMeditations = StreamSupport
 				.stream(subMeditationRepository.findAll().spliterator(), false)
 				.filter(subMed -> subMed.getParentMeditationId() == id).collect(Collectors.toList());
@@ -114,7 +114,7 @@ public class MeditationService implements Service {
 		return meditation;
 	}
 
-	public String converToResponse(Meditation meditation) {
+	public String converToResponse(final Meditation meditation) {
 		return meditation.toString();
 	}
 

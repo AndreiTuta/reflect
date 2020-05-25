@@ -9,6 +9,8 @@ import org.thymeleaf.util.StringUtils;
 import com.at.reflect.model.email.util.EmailUtil;
 import com.at.reflect.model.entity.User;
 import com.at.reflect.model.repository.UserRepository;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import lombok.AllArgsConstructor;
 
@@ -21,7 +23,7 @@ public class UserService implements Service {
 	@Autowired
 	private EmailUtil emailUtil;
 
-	public User fetchUser(String username, String password, String id) {
+	public User fetchUser(final String username, final String password, final String id) {
 		if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
 			return StreamSupport.stream(userRepository.findAll().spliterator(), false)
 					.filter(u -> username.equals(u.getUsername()) && password.equals(u.getPassword())).findAny()
@@ -32,11 +34,11 @@ public class UserService implements Service {
 		return null;
 	}
 
-	public User fetchUserById(String id) {
+	public User fetchUserById(final String id) {
 		return fetchUser("", "", id);
 	}
 
-	public User fetchUserByUsernameAndPassword(String username, String password) {
+	public User fetchUserByUsernameAndPassword(final String username, final String password) {
 		if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
 			return StreamSupport.stream(userRepository.findAll().spliterator(), false)
 					.filter(u -> username.equals(u.getUsername()) && password.equals(u.getPassword())).findAny()
@@ -45,7 +47,7 @@ public class UserService implements Service {
 		return null;
 	}
 
-	public User fetchUserBySecret(String secret) {
+	public User fetchUserBySecret(final String secret) {
 		if (!StringUtils.isEmpty(secret)) {
 			return StreamSupport.stream(userRepository.findAll().spliterator(), false)
 					.filter(u -> secret.equals(u.getUsername())).findAny().orElse(null);
@@ -61,7 +63,7 @@ public class UserService implements Service {
 		return false;
 	}
 
-	public String convertToResponse(User user) {
+	public String convertToResponse(final User user) {
 		return user.toString();
 	}
 
@@ -80,15 +82,38 @@ public class UserService implements Service {
 		return newUser;
 	}
 
-	/**
-	 * @param newPassword
-	 * @param newUserName
-	 * @param user
-	 */
-	public User updateExistingUser(final String newPassword, String newUserName, User user) {
-		user.setUsername(newUserName);
-		user.setPassword(newPassword);
+	public User convertJsonToUser(final String userJsonString, final boolean useId) {
+		if (useId) {
+			final JsonObject jsonObjectFromString = JsonParser.parseString(userJsonString).getAsJsonObject();
+			User user = fetchUser("", "", jsonObjectFromString.get("id").getAsString());
+			return user;
+		}
+		return convertJsonToUser(userJsonString);
+	}
+
+	public User convertJsonToUser(final String userJsonString) {
+		final JsonObject jsonObjectFromString = JsonParser.parseString(userJsonString).getAsJsonObject();
+		User user = fetchUser(jsonObjectFromString.get("username").getAsString(),
+				jsonObjectFromString.get("password").getAsString(), "");
+		return user;
+	}
+
+	public User createUserFromJson(final String userJsonString) {
+		final JsonObject jsonObjectFromString = JsonParser.parseString(userJsonString).getAsJsonObject();
+		User user = createNewUser(jsonObjectFromString.get("username").getAsString(),
+				jsonObjectFromString.get("password").getAsString(),
+				jsonObjectFromString.get("emailAddress").getAsString());
+		return user;
+	}
+
+	public User updateExistingUser(final String userJsonString, final User user) {
+		final JsonObject jsonObjectFromString = JsonParser.parseString(userJsonString).getAsJsonObject();
+		user.setName(jsonObjectFromString.get("username").getAsString());
+		user.setUsername(jsonObjectFromString.get("username").getAsString());
+		user.setPassword(jsonObjectFromString.get("password").getAsString());
+		user.setEmail(jsonObjectFromString.get("emailAddress").getAsString());
 		save(user);
+		emailUtil.sendEmail(user.getEmail());
 		return user;
 	}
 
