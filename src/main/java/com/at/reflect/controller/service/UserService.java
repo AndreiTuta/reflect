@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
+import com.at.reflect.model.email.util.EmailUtil;
 import com.at.reflect.model.entity.User;
 import com.at.reflect.model.repository.UserRepository;
 
@@ -17,6 +18,8 @@ public class UserService implements Service {
 
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private EmailUtil emailUtil;
 
 	public User fetchUser(String username, String password, String id) {
 		if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
@@ -58,8 +61,40 @@ public class UserService implements Service {
 		return false;
 	}
 
+	public String convertToResponse(User user) {
+		return user.toString();
+	}
+
+	/**
+	 * @param username
+	 * @param password
+	 * @param emailAddress
+	 */
+	public User createNewUser(final String username, final String password, final String emailAddress) {
+		User newUser = new User();
+		newUser.setUsername(username);
+		newUser.setPassword(password);
+		newUser.setEmail(emailAddress);
+		save(newUser);
+		emailUtil.sendEmail(newUser.getEmail());
+		return newUser;
+	}
+
+	/**
+	 * @param newPassword
+	 * @param newUserName
+	 * @param user
+	 */
+	public User updateExistingUser(final String newPassword, String newUserName, User user) {
+		user.setUsername(newUserName);
+		user.setPassword(newPassword);
+		save(user);
+		return user;
+	}
+
 	@Override
 	public ServiceType getType() {
 		return ServiceType.USER;
 	}
+
 }

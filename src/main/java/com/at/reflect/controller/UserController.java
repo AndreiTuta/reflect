@@ -3,17 +3,15 @@ package com.at.reflect.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.thymeleaf.util.StringUtils;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.util.StringUtils;
 
 import com.at.reflect.controller.service.UserService;
-import com.at.reflect.model.email.util.EmailUtil;
 import com.at.reflect.model.entity.User;
 
 @Controller
@@ -22,8 +20,6 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private EmailUtil emailUtil;
 	// Constants
 	private final String INVALID_CRED = "No params passed. Nothing has been executed";
 
@@ -34,15 +30,10 @@ public class UserController {
 		if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
 			User user = userService.fetchUser(username, password, "");
 			if (user != null) {
-//				emailUtil.sendEmail(emailAddress);
+				return ResponseEntity.ok(userService.convertToResponse(user));
 			} else {
-				User newUser = new User();
-				newUser.setUsername(username);
-				newUser.setPassword(password);
-				newUser.setEmail(emailAddress);
-				userService.save(newUser);
-//				emailUtil.sendEmail(emailAddress);
-				return ResponseEntity.ok(converToResponse(user));
+				User newUser = userService.createNewUser(username, password, emailAddress);
+				return ResponseEntity.ok(userService.convertToResponse(newUser));
 			}
 		}
 		return ResponseEntity.ok(INVALID_CRED);
@@ -55,7 +46,7 @@ public class UserController {
 		if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
 			User user = userService.fetchUser(username, password, "");
 			if (user != null) {
-				return ResponseEntity.ok(converToResponse(user));
+				return ResponseEntity.ok(userService.convertToResponse(user));
 			} else {
 				return ResponseEntity.ok("Failed retrieving info for provided params");
 			}
@@ -70,19 +61,12 @@ public class UserController {
 		if (!StringUtils.isEmpty(id)) {
 			User user = userService.fetchUser("", "", id);
 			if (user != null) {
-				user.setUsername(newPassword);
-				user.setPassword(newPassword);
-				userService.save(user);
-				return ResponseEntity.ok(converToResponse(user));
+				User updatedUser = userService.updateExistingUser(newUsername, newPassword, user);
+				return ResponseEntity.ok(userService.convertToResponse(updatedUser));
 			} else {
 				return ResponseEntity.ok("Failed retrieving info for provided params");
 			}
 		}
 		return ResponseEntity.ok(INVALID_CRED);
 	}
-
-	private String converToResponse(User user) {
-		return user.toString();
-	}
-
 }
