@@ -5,22 +5,33 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jooq.tools.StringUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import com.at.reflect.model.entity.Meditation;
 import com.at.reflect.model.entity.SubMeditation;
 import com.at.reflect.model.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
+/**
+ *
+ * @author at
+ */
+@Component
 public class JsonUtil implements Util, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private static final Gson gson = new Gson();
-
-	@Override
-	public UtilType getType() {
-		return UtilType.JSON;
-	}
+	private static final ObjectMapper mapper = new ObjectMapper();
+	public static final ResponseEntity<JsonObject> NO_RESULT = new ResponseEntity<>(new JsonObject(),
+			HttpStatus.BAD_REQUEST);
+	public static final ResponseEntity<JsonObject> INVALID_CREDENTIALS = new ResponseEntity<>(new JsonObject(),
+			HttpStatus.BAD_REQUEST);
 
 	public static boolean toBoolean(Object object) {
 		String string = object.toString();
@@ -32,26 +43,47 @@ public class JsonUtil implements Util, Serializable {
 		return Arrays.asList(ts);
 	}
 
-	public static JsonArray usersToJson(Iterable<User> users) {
+	public static JsonArray usersToJsonArray(Iterable<User> users) {
 		JsonArray jsonArray = new JsonArray();
 		users.forEach(user -> {
 			// Java object to JSON string
 			String jsonUserString = gson.toJson(user);
 			jsonArray.add(jsonUserString);
 		});
-
 		return jsonArray;
-
 	}
 
-	public static JsonArray meditationsToJson(Iterable<Meditation> meditations) {
-		JsonArray jsonArray = new JsonArray();
+	public static JsonObject meditationsToJsonObject(Iterable<Meditation> meditations) {
+		JsonObject jsonArray = new JsonObject();
 		meditations.forEach(meditation -> {
-			// TODO: Break this in a separate method
-			String jsonMeditationString = gson.toJson(meditation);
-			jsonArray.add(jsonMeditationString);
+			jsonArray.addProperty(meditation.getId().toString(), mapObject(meditation));
 		});
-
 		return jsonArray;
+	}
+
+	public static JsonObject meditationToJsonObject(Meditation meditation) {
+		JsonObject jsonArray = new JsonObject();
+		jsonArray.addProperty(meditation.getId().toString(), mapObject(meditation));
+		return jsonArray;
+	}
+
+	/**
+	 * @param T
+	 * @return
+	 */
+	public static String mapObject(Object object) {
+		try {
+			String carAsString = mapper.writeValueAsString(object);
+			return carAsString;
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	@Override
+	public UtilType getType() {
+		return UtilType.JSON;
 	}
 }

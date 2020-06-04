@@ -25,7 +25,7 @@ public class UserService implements Service {
 	private EmailUtil emailUtil;
 
 	public String fetchAllUsers() {
-		return JsonUtil.usersToJson(userRepository.findAll()).toString();
+		return JsonUtil.usersToJsonArray(userRepository.findAll()).toString();
 	}
 
 	public User fetchUser(final String username, final String password, final String id) {
