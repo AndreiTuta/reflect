@@ -93,6 +93,14 @@ public class MeditationService implements Service {
 		}
 		return meditation;
 	}
+	
+	public String fetchAllMeditations() {
+		Iterable<Meditation> meditations = meditationRepository.findAll();
+		meditations.forEach(meditation -> {
+			meditation.setSubmeditations(fetchSubMeditationsList(meditation.getId()));
+		});
+		return JsonUtil.meditationsToJson(meditations).toString();
+	}
 
 	private List<SubMeditation> fetchSubMeditationsList(final Integer id) {
 		List<SubMeditation> meditationSubMeditations = StreamSupport
@@ -122,4 +130,5 @@ public class MeditationService implements Service {
 	public ServiceType getType() {
 		return ServiceType.MED;
 	}
+
 }

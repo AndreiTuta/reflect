@@ -45,8 +45,12 @@ public class MeditationController {
 
 	@GetMapping(value = "/getMeditation")
 	@ResponseBody
-	public ResponseEntity<String> fetchMeditation(@RequestParam final String meditationName) {
+	public ResponseEntity<String> fetchMeditation(@RequestParam final String meditationName,
+			@RequestParam final boolean all) {
 		if (!StringUtils.isEmpty(meditationName)) {
+			if(all) {
+				return ResponseEntity.ok(meditationService.fetchAllMeditations());
+			}
 			Meditation meditation = meditationService.fetchMeditationByName(meditationName);
 			if (meditation != null) {
 				return ResponseEntity.ok(meditationService.converToResponse(meditation));

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.jooq.tools.StringUtils;
 
+import com.at.reflect.model.entity.Meditation;
 import com.at.reflect.model.entity.SubMeditation;
 import com.at.reflect.model.entity.User;
 import com.google.gson.Gson;
@@ -41,5 +42,16 @@ public class JsonUtil implements Util, Serializable {
 
 		return jsonArray;
 
+	}
+
+	public static JsonArray meditationsToJson(Iterable<Meditation> meditations) {
+		JsonArray jsonArray = new JsonArray();
+		meditations.forEach(meditation -> {
+			// TODO: Break this in a separate method
+			String jsonMeditationString = gson.toJson(meditation);
+			jsonArray.add(jsonMeditationString);
+		});
+
+		return jsonArray;
 	}
 }
