@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
+import com.at.reflect.common.utils.JsonUtil;
 import com.at.reflect.model.email.util.EmailUtil;
 import com.at.reflect.model.entity.User;
 import com.at.reflect.model.repository.UserRepository;
@@ -22,6 +23,10 @@ public class UserService implements Service {
 	private UserRepository userRepository;
 	@Autowired
 	private EmailUtil emailUtil;
+
+	public String fetchAllUsers() {
+		return JsonUtil.usersToJson(userRepository.findAll()).toString();
+	}
 
 	public User fetchUser(final String username, final String password, final String id) {
 		if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {

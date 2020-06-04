@@ -7,12 +7,14 @@ import java.util.List;
 import org.jooq.tools.StringUtils;
 
 import com.at.reflect.model.entity.SubMeditation;
+import com.at.reflect.model.entity.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
 public class JsonUtil implements Util, Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private static final Gson gson = new Gson();
 
 	@Override
 	public UtilType getType() {
@@ -27,5 +29,17 @@ public class JsonUtil implements Util, Serializable {
 	public static List<SubMeditation> toSubMeditationList(JsonArray jsonArray) {
 		SubMeditation[] ts = new Gson().fromJson(jsonArray, SubMeditation[].class);
 		return Arrays.asList(ts);
+	}
+
+	public static JsonArray usersToJson(Iterable<User> users) {
+		JsonArray jsonArray = new JsonArray();
+		users.forEach(user -> {
+			// Java object to JSON string
+			String jsonUserString = gson.toJson(user);
+			jsonArray.add(jsonUserString);
+		});
+
+		return jsonArray;
+
 	}
 }

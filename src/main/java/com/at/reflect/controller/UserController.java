@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thymeleaf.util.StringUtils;
 
@@ -43,11 +44,15 @@ public class UserController {
 
 	@GetMapping(value = "/getUser")
 	@ResponseBody
-	public ResponseEntity<String> logUsers(@RequestBody final JSONObject userPasswordJson) {
+	public ResponseEntity<String> logUsers(@RequestBody final JSONObject userPasswordJson,
+			@RequestParam final boolean all) {
 		final String userJsonString = userPasswordJson.toString();
 		if (!StringUtils.isEmpty(userJsonString)) {
 			User user = userService.convertJsonToUser(userJsonString);
 			if (user != null) {
+				if(all) {
+					return ResponseEntity.ok(userService.fetchAllUsers());
+				}
 				return ResponseEntity.ok(userService.convertToResponse(user));
 			} else {
 				return ResponseEntity.ok("Failed retrieving info for provided params");
