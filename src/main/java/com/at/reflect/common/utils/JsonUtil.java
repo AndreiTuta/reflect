@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jooq.tools.StringUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.jooq.tools.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import com.at.reflect.model.entity.Meditation;
@@ -28,10 +27,6 @@ public class JsonUtil implements Util, Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final Gson gson = new Gson();
 	private static final ObjectMapper mapper = new ObjectMapper();
-	public static final ResponseEntity<JsonObject> NO_RESULT = new ResponseEntity<>(new JsonObject(),
-			HttpStatus.BAD_REQUEST);
-	public static final ResponseEntity<JsonObject> INVALID_CREDENTIALS = new ResponseEntity<>(new JsonObject(),
-			HttpStatus.BAD_REQUEST);
 
 	public static boolean toBoolean(Object object) {
 		String string = object.toString();
@@ -53,10 +48,10 @@ public class JsonUtil implements Util, Serializable {
 		return jsonArray;
 	}
 
-	public static JsonObject meditationsToJsonObject(Iterable<Meditation> meditations) {
-		JsonObject jsonArray = new JsonObject();
+	public static JsonArray meditationsToJsonObject(Iterable<Meditation> meditations) {
+		JsonArray jsonArray = new JsonArray();
 		meditations.forEach(meditation -> {
-			jsonArray.addProperty(meditation.getId().toString(), mapObject(meditation));
+			jsonArray.add(JSONObject.escape(mapObject(meditation)));
 		});
 		return jsonArray;
 	}

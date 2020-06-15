@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
-import com.at.reflect.common.utils.JsonUtil;
 import com.at.reflect.model.email.util.EmailUtil;
 import com.at.reflect.model.entity.User;
 import com.at.reflect.model.repository.UserRepository;
@@ -25,7 +24,8 @@ public class UserService implements Service {
 	private EmailUtil emailUtil;
 
 	public String fetchAllUsers() {
-		return JsonUtil.usersToJsonArray(userRepository.findAll()).toString();
+//		return JsonUtil.usersToJsonArray(userRepository.findAll()).toString();
+		return userRepository.findAll().toString();
 	}
 
 	public User fetchUser(final String username, final String password, final String id) {
@@ -111,14 +111,15 @@ public class UserService implements Service {
 		return user;
 	}
 
-	public User updateExistingUser(final String userJsonString, final User user) {
-		final JsonObject jsonObjectFromString = JsonParser.parseString(userJsonString).getAsJsonObject();
-		user.setName(jsonObjectFromString.get("username").getAsString());
-		user.setUsername(jsonObjectFromString.get("username").getAsString());
-		user.setPassword(jsonObjectFromString.get("password").getAsString());
-		user.setEmail(jsonObjectFromString.get("emailAddress").getAsString());
-		save(user);
-		emailUtil.sendEmail(user.getEmail());
+	public User updateExistingUser(final String updatedUserName, final String updatedUserPassword,
+			final String updatedUserEmail, final User user) {
+		if (user != null) {
+			user.setUsername(updatedUserName);
+			user.setPassword(updatedUserPassword);
+			user.setEmail(updatedUserEmail);
+			save(user);
+			emailUtil.sendEmail(user.getEmail());
+		}
 		return user;
 	}
 
@@ -126,5 +127,4 @@ public class UserService implements Service {
 	public ServiceType getType() {
 		return ServiceType.USER;
 	}
-
 }

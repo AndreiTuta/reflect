@@ -1,13 +1,11 @@
 package com.at.reflect.controller;
 
-import org.jooq.tools.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,14 +25,15 @@ public class UserController {
 
 	@PostMapping(value = "/addUser")
 	@ResponseBody
-	public ResponseEntity<String> addUsers(@RequestBody final JSONObject userJson) {
-		final String userJsonString = userJson.toString();
-		if (!StringUtils.isEmpty(userJsonString)) {
-			User user = userService.convertJsonToUser(userJsonString);
+	public ResponseEntity<String> addUsers(@RequestParam(required = true) final String userName,
+			@RequestParam(required = true) final String userPassword,
+			@RequestParam(required = false) final String userEmail) {
+		if (!StringUtils.isEmpty(userName) && !StringUtils.isEmpty(userPassword)) {
+			User user = userService.fetchUser(userName, userPassword, "");
 			if (user != null) {
 				return ResponseEntity.ok("User already exists");
 			} else {
-				User newUser = userService.createUserFromJson(userJsonString);
+				User newUser = userService.createNewUser(userName, userPassword, userEmail);
 				return ResponseEntity.ok(userService.convertToResponse(newUser));
 			}
 		}
@@ -44,13 +43,13 @@ public class UserController {
 
 	@GetMapping(value = "/getUser")
 	@ResponseBody
-	public ResponseEntity<String> logUsers(@RequestBody final JSONObject userPasswordJson,
-			@RequestParam final boolean all) {
-		final String userJsonString = userPasswordJson.toString();
-		if (!StringUtils.isEmpty(userJsonString)) {
-			User user = userService.convertJsonToUser(userJsonString);
+	public ResponseEntity<String> logUsers(@RequestParam(required = true) final String userName,
+			@RequestParam(required = true) final String userPassword,
+			@RequestParam(required = false) final String userEmail, @RequestParam final boolean all) {
+		if (!StringUtils.isEmpty(userName) && !StringUtils.isEmpty(userPassword)) {
+			User user = userService.fetchUser(userName, userPassword, "");
 			if (user != null) {
-				if(all) {
+				if (all) {
 					return ResponseEntity.ok(userService.fetchAllUsers());
 				}
 				return ResponseEntity.ok(userService.convertToResponse(user));
@@ -63,12 +62,13 @@ public class UserController {
 
 	@PutMapping(value = "/updateUser")
 	@ResponseBody
-	public ResponseEntity<String> udpateUsers(@RequestBody final JSONObject userJson) {
-		final String userJsonString = userJson.toString();
-		if (!StringUtils.isEmpty(userJsonString)) {
-			User user = userService.convertJsonToUser(userJsonString, true);
+	public ResponseEntity<String> udpateUsers(@RequestParam(required = true) final String userName,
+			@RequestParam(required = true) final String userPassword,
+			@RequestParam(required = false) final String userEmail) {
+		if (!StringUtils.isEmpty(userName) && !StringUtils.isEmpty(userPassword)) {
+			User user = userService.fetchUser(userName, userPassword, "");
 			if (user != null) {
-				User updatedUser = userService.updateExistingUser(userJsonString, user);
+				User updatedUser = userService.updateExistingUser(userName, userPassword, userEmail, user);
 				return ResponseEntity.ok(userService.convertToResponse(updatedUser));
 			} else {
 				return ResponseEntity.ok("Failed retrieving info for provided params");

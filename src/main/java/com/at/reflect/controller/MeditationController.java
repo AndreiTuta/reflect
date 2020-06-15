@@ -49,7 +49,7 @@ public class MeditationController {
 			@RequestParam final boolean all) {
 		if (!StringUtils.isEmpty(meditationName)) {
 			if(all) {
-				return ResponseEntity.ok(meditationService.fetchAllMeditations());
+				return ResponseEntity.ok(meditationService.fetchAllMeditations(true));
 			}
 			Meditation meditation = meditationService.fetchMeditationByName(meditationName);
 			if (meditation != null) {

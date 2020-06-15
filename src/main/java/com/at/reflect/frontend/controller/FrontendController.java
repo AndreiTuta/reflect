@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class FrontendController {
-	@RequestMapping(value = "/api/frontend/v1//index")
+	@RequestMapping(value = "/api/frontend/v1/index")
 	@ResponseBody
 	public ModelAndView welcome() {
 		ModelAndView indexView = new ModelAndView("index");

@@ -93,13 +93,26 @@ public class MeditationService implements Service {
 		}
 		return meditation;
 	}
-	
+
 	public String fetchAllMeditations() {
 		Iterable<Meditation> meditations = meditationRepository.findAll();
 		meditations.forEach(meditation -> {
 			meditation.setSubmeditations(fetchSubMeditationsList(meditation.getId()));
 		});
-		return JsonUtil.meditationsToJson(meditations).toString();
+		return JsonUtil.meditationsToJsonObject(meditations).toString();
+	}
+
+	public String fetchAllMeditations(boolean skipPreview) {
+		Iterable<Meditation> meditations = meditationRepository.findAll();
+		meditations.forEach(meditation -> {
+			if (skipPreview) {
+				meditation.setPreview("skipped");
+			}
+			meditation.setSubmeditations(fetchSubMeditationsList(meditation.getId()));
+		});
+		String string = JsonUtil.meditationsToJsonObject(meditations).toString();
+		string = string.replaceAll("\\\\", "");
+		return string;
 	}
 
 	private List<SubMeditation> fetchSubMeditationsList(final Integer id) {
