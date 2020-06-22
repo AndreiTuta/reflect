@@ -1,0 +1,38 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+
+<body>
+
+	<h1>Product list</h1>
+
+	<table>
+		<tr>
+			<th>NAME</th>
+			<th>PRICE</th>
+			<th>IN STOCK</th>
+		</tr>
+	</table>
+
+
+
+</body> 
+
+
+<script>
+	var settings = {
+		"url" : "http://localhost:8080/api/v1/user/getUser?username=cosmin.mihalache.admin2&password=password",
+		"method" : "GET",
+		"timeout" : 0,
+		"headers" : {
+			"Authorization" : "Basic cmVmbGVjdC11c2VyOnVzZXIxUGFzcw=="
+		},
+	};
+
+	$.ajax(settings).done(function(response) {
+		console.log(response);
+	});
+</script>
+</html>
