@@ -5,6 +5,12 @@ target/
 !**/src/test/**
 *.properties
 
+### all hidden files
+.*
+
+### MVN cmd runner
+mvnw*
+
 ### STS ###
 .apt_generated
 .classpath
