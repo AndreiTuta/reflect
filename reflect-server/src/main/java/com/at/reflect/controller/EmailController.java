@@ -23,7 +23,6 @@ import com.at.reflect.model.entity.Email;
 @Controller
 public class EmailController
 {
-
     @Autowired
     private EmailRepository emailRepository;
     // Constants

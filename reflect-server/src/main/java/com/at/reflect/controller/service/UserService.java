@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
-import com.at.reflect.model.email.util.EmailUtil;
 import com.at.reflect.model.entity.User;
 import com.at.reflect.model.repository.UserRepository;
 import com.google.gson.JsonObject;
@@ -20,9 +19,6 @@ public class UserService implements Service {
 
 	@Autowired
 	private UserRepository userRepository;
-	@Autowired
-	private EmailUtil emailUtil;
-
 	public String fetchAllUsers() {
 //		return JsonUtil.usersToJsonArray(userRepository.findAll()).toString();
 		return userRepository.findAll().toString();
@@ -83,7 +79,6 @@ public class UserService implements Service {
 		newUser.setPassword(password);
 		newUser.setEmail(emailAddress);
 		save(newUser);
-		emailUtil.sendEmail(newUser.getEmail());
 		return newUser;
 	}
 
@@ -118,7 +113,6 @@ public class UserService implements Service {
 			user.setPassword(updatedUserPassword);
 			user.setEmail(updatedUserEmail);
 			save(user);
-			emailUtil.sendEmail(user.getEmail());
 		}
 		return user;
 	}
