@@ -34,15 +34,15 @@ public class UserController {
 		return new ResponseEntity<User>(HttpStatus.CONFLICT);
 	}
 
-	@GetMapping(value = "/users")
+	@GetMapping(value = "/user")
 	@ResponseBody
-	public ResponseEntity<List<User>> logUsers(@RequestParam(required = true) final String userEmail,
+	public ResponseEntity<User> getUser(@RequestParam(required = true) final String userEmail,
 			@RequestParam(required = true) final String userPassword) {
 		User user = userService.validateReqParams(userEmail, userPassword);
 		if (user != null) {
-			return ResponseEntity.ok(userService.fetchAllUsers());
+			return ResponseEntity.ok(user);
 		} else {
-			return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
 		}
 	}
 
@@ -59,6 +59,31 @@ public class UserController {
 					.ok(userService.updateExistingUser(updatedUserEmail, updatedUserPassword, updatedUserName, user));
 		} else {
 			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+		}
+	}
+	
+//	TODO: Delete account
+//	@DeleteMapping(value = "/user")
+//	@ResponseBody
+//	public ResponseEntity<User> removeUser(@RequestParam(required = true) final String userEmail,
+//			@RequestParam(required = true) final String userPassword) {
+//		User user = userService.validateReqParams(userEmail, userPassword);
+//		if (user != null) {
+//			return ResponseEntity.ok(user);
+//		} else {
+//			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+//		}
+//	}
+
+	@GetMapping(value = "/users")
+	@ResponseBody
+	public ResponseEntity<List<User>> logUsers(@RequestParam(required = true) final String userEmail,
+			@RequestParam(required = true) final String userPassword) {
+		User user = userService.validateReqParams(userEmail, userPassword);
+		if (user != null) {
+			return ResponseEntity.ok(userService.fetchAllUsers());
+		} else {
+			return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
 		}
 	}
 }
