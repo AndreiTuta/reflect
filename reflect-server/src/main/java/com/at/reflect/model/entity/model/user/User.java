@@ -1,4 +1,4 @@
-package com.at.reflect.model.entity;
+package com.at.reflect.model.entity.model.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,9 +33,11 @@ public class User {
 	private String name;
 	@Column(name = "password")
 	private String password;
-	@Column(name = "username")
-	private String username;
 	@Column(name = "email")
 	private String email;
+	@Column(name = "created")
+	private String created;
+	@Column(name = "last_udpated")
+	private String last_updated;
 
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.at.reflect.model.entity.Meditation;
 import com.at.reflect.model.entity.SubMeditation;
-import com.at.reflect.model.entity.User;
+import com.at.reflect.model.entity.model.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;

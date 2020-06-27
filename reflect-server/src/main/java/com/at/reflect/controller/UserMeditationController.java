@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.at.reflect.model.entity.Meditation;
-import com.at.reflect.model.entity.User;
+import com.at.reflect.model.entity.model.user.User;
 import com.at.reflect.model.entity.UserMeditation;
 import com.at.reflect.model.repository.MeditationRepository;
 import com.at.reflect.model.repository.UserMeditationRepository;
