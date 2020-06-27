@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.thymeleaf.util.StringUtils;
 
 import com.at.reflect.controller.service.MeditationService;
-import com.at.reflect.model.entity.Meditation;
+import com.at.reflect.model.entity.meditation.Meditation;
 
 import lombok.extern.slf4j.Slf4j;
 

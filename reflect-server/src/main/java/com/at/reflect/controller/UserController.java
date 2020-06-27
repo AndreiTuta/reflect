@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.at.reflect.controller.service.UserService;
-import com.at.reflect.model.entity.model.user.User;
+import com.at.reflect.model.entity.user.User;
 
 @Controller
 @RequestMapping(value = "/api/v1/")

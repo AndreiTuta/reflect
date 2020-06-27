@@ -1,4 +1,4 @@
-package com.at.reflect.model.entity;
+package com.at.reflect.model.entity.meditation;
 
 import java.util.List;
 
@@ -32,16 +32,16 @@ public class Meditation {
 	private Integer id;
 	@Column(name = "available")
 	private boolean available;
-	@Column(name = "name")
-	private String name;
 	@Column(name = "duration")
 	private String duration;
-	@Column(name = "preview")
-	private String preview;
+	@Column(name = "name")
+	private String name;
 	@Column(name = "address")
 	private String address;
 	@Column(name = "numMed")
 	private Integer numMed;
+	@Column(name = "preview")
+	private String preview;
 	@Transient
 	private List<SubMeditation> submeditations;
 }

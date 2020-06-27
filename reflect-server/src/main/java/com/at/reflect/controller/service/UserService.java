@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
-import com.at.reflect.model.entity.model.user.User;
+import com.at.reflect.model.entity.user.User;
 import com.at.reflect.model.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
