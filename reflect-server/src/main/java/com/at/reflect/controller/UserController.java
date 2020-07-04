@@ -24,9 +24,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@PostMapping(value = "/{userId}")
+	@PostMapping(value = "/{userToken}")
 	@ResponseBody
-	public ResponseEntity<User> addUsers(@PathVariable String userId,
+	public ResponseEntity<User> addUsers(@PathVariable String userToken,
 			@RequestParam(required = true) final String userEmail,
 			@RequestParam(required = true) final String userPassword) {
 		User user = userService.validateReqParams(userEmail, userPassword);
@@ -36,9 +36,9 @@ public class UserController {
 		return new ResponseEntity<User>(HttpStatus.CONFLICT);
 	}
 
-	@GetMapping(value = "/{userId}")
+	@GetMapping(value = "/{userToken}")
 	@ResponseBody
-	public ResponseEntity<User> getUser(@PathVariable String userId,
+	public ResponseEntity<User> getUser(@PathVariable String userToken,
 			@RequestParam(required = true) final String userEmail,
 			@RequestParam(required = true) final String userPassword) {
 		User user = userService.validateReqParams(userEmail, userPassword);
@@ -49,9 +49,9 @@ public class UserController {
 		}
 	}
 
-	@PutMapping(value = "/{userId}")
+	@PutMapping(value = "/{userToken}")
 	@ResponseBody
-	public ResponseEntity<User> udpateUsers(@PathVariable String userId,
+	public ResponseEntity<User> udpateUsers(@PathVariable String userToken,
 			@RequestParam(required = true) final String userEmail,
 			@RequestParam(required = true) final String userPassword,
 			@RequestParam(required = false, defaultValue = "") final String updatedUserEmail,
@@ -88,7 +88,7 @@ public class UserController {
 	@ResponseBody
 	public ResponseEntity<List<User>> logUsers(@RequestParam(required = true) final String userEmail,
 			@RequestParam(required = true) final String userPassword) {
-		User user = userService.validateReqParams(userEmail, userPassword);
+		User user = userService.fetchUser(userEmail, userPassword, "");
 		if (user != null) {
 			return ResponseEntity.ok(userService.fetchAllUsers());
 		} else {
