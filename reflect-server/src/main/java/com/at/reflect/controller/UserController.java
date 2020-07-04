@@ -24,24 +24,24 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@PostMapping(value = "/{userToken}")
+	@PostMapping(value = "/{userId}")
 	@ResponseBody
-	public ResponseEntity<User> addUsers(@PathVariable String userToken,
+	public ResponseEntity<?> addUsers(@PathVariable String userId,
 			@RequestParam(required = true) final String userEmail,
 			@RequestParam(required = true) final String userPassword) {
-		User user = userService.validateReqParams(userEmail, userPassword);
+		User user = userService.processUser(userEmail, userPassword, userId);
 		if (user != null) {
 			return ResponseEntity.ok(userService.createNewUser(userEmail, userPassword));
 		}
 		return new ResponseEntity<User>(HttpStatus.CONFLICT);
 	}
 
-	@GetMapping(value = "/{userToken}")
+	@GetMapping(value = "/{userId}")
 	@ResponseBody
-	public ResponseEntity<User> getUser(@PathVariable String userToken,
-			@RequestParam(required = true) final String userEmail,
-			@RequestParam(required = true) final String userPassword) {
-		User user = userService.validateReqParams(userEmail, userPassword);
+	public ResponseEntity<?> getUser(@PathVariable String userId,
+			@RequestParam(required = false, defaultValue = "") final String userEmail,
+			@RequestParam(required = false, defaultValue = "") final String userPassword) {
+		User user = userService.processUser(userEmail, userPassword, userId);
 		if (user != null) {
 			return ResponseEntity.ok(user);
 		} else {
@@ -49,15 +49,15 @@ public class UserController {
 		}
 	}
 
-	@PutMapping(value = "/{userToken}")
+	@PutMapping(value = "/{userId}")
 	@ResponseBody
-	public ResponseEntity<User> udpateUsers(@PathVariable String userToken,
-			@RequestParam(required = true) final String userEmail,
-			@RequestParam(required = true) final String userPassword,
+	public ResponseEntity<?> udpateUsers(@PathVariable String userId,
+			@RequestParam(required = false, defaultValue = "") final String userEmail,
+			@RequestParam(required = false, defaultValue = "") final String userPassword,
 			@RequestParam(required = false, defaultValue = "") final String updatedUserEmail,
 			@RequestParam(required = false, defaultValue = "") final String updatedUserPassword,
 			@RequestParam(required = false, defaultValue = "") final String updatedUserName) {
-		User user = userService.validateReqParams(userEmail, userPassword);
+		User user = userService.processUser(userEmail, userPassword, userId);
 		if (user != null) {
 			return ResponseEntity
 					.ok(userService.updateExistingUser(updatedUserEmail, updatedUserPassword, updatedUserName, user));
@@ -86,7 +86,7 @@ public class UserController {
 //	
 	@GetMapping(value = "/users")
 	@ResponseBody
-	public ResponseEntity<List<User>> logUsers(@RequestParam(required = true) final String userEmail,
+	public ResponseEntity<?> logUsers(@RequestParam(required = true) final String userEmail,
 			@RequestParam(required = true) final String userPassword) {
 		User user = userService.fetchUser(userEmail, userPassword, "");
 		if (user != null) {

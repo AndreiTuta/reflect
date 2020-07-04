@@ -3,6 +3,7 @@ package com.at.reflect.security.controller;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.thymeleaf.util.StringUtils;
 
-import com.at.reflect.config.jwt.JwtTokenUtil;
+import com.at.reflect.common.utils.JwtTokenUtil;
 import com.at.reflect.model.request.JwtRequest;
 import com.at.reflect.model.response.JwtResponse;
 
@@ -26,9 +28,6 @@ public class JwtAuthenticationController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
 
 	@Autowired
 	private UserDetailsService jwtInMemoryUserDetailsService;
@@ -41,9 +40,11 @@ public class JwtAuthenticationController {
 		final UserDetails userDetails = jwtInMemoryUserDetailsService
 				.loadUserByUsername(authenticationRequest.getUsername());
 
-		final String token = jwtTokenUtil.generateToken(userDetails);
-
-		return ResponseEntity.ok(new JwtResponse(token));
+		if (!StringUtils.isEmpty(userDetails.getPassword())) {
+			final String token = JwtTokenUtil.generateToken(userDetails);
+			return ResponseEntity.ok(new JwtResponse(token));
+		}
+		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 	}
 
 	private void authenticate(String username, String password) throws Exception {

@@ -48,7 +48,7 @@ public class UserService implements Service {
 	public User fetchUserBySecret(final String secret) {
 		if (!StringUtils.isEmpty(secret)) {
 			return StreamSupport.stream(userRepository.findAll().spliterator(), false)
-					.filter(u -> secret.equals(u.getName())).findAny().orElse(null);
+					.filter(u -> secret.equals(u.getEmail())).findAny().orElse(null);
 		}
 		return null;
 	}
@@ -103,12 +103,9 @@ public class UserService implements Service {
 	/**
 	 * @param userEmail
 	 * @param userPassword
+	 * @param userId       TODO
 	 */
-	public User validateReqParams(final String userEmail, final String userPassword) {
-		if (!StringUtils.isEmpty(userEmail) && !StringUtils.isEmpty(userPassword)) {
-			User user = fetchUser(userEmail, userPassword, "");
-			return user;
-		}
-		return null;
+	public User processUser(final String userEmail, final String userPassword, String userId) {
+		return fetchUser(userEmail, userPassword, userId);
 	}
 }
