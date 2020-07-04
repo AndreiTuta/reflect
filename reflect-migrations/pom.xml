@@ -13,6 +13,7 @@
 	</parent>
 
 	<properties>
+		<java.version>11</java.version>
 		<flyway.url>jdbc:mysql://localhost:3306/reflect</flyway.url>
 		<flyway.user>root</flyway.user>
 		<flyway.password>password</flyway.password>
