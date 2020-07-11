@@ -2,7 +2,6 @@ package com.at.reflect.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -17,30 +16,20 @@ public class GlobalExceptionController {
 
 	private final ErrorResponseFactory errorResponseFactory;
 
-	/**
-	 * 
-	 * Example:
-	 * 
-	 * <pre>
-	{
-	"httpStatus": 400,
-	"field": "songRequest.title",
-	"errorMessage": "Title must not be null/blank"
-	}
-	 * </pre>
-	 * 
-	 * @param e
-	 * @return
-	 */
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponse> unHandledExceptions(MethodArgumentNotValidException e) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(errorResponseFactory.throwNewError(HttpStatus.BAD_REQUEST, e.getBindingResult()));
-	}
+	
+//	@ExceptionHandler(MethodArgumentNotValidException.class)
+//	public ResponseEntity<ErrorResponse> unHandledExceptions(MethodArgumentNotValidException e) {
+//		return ResponseEntity.status(HttpStatus.NO_CONTENT)
+//				.body(errorResponseFactory.throwNewError(HttpStatus.NO_CONTENT, e.getBindingResult()));
+//	}
 
+	/*
+	 * Use as a default exception to be thrown when the credentials are invalid
+	 * TODO Update to return relevant information
+	 */
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> unHandledExceptions(Exception e) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseFactory.buildError(e));
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(errorResponseFactory.buildError(e));
 	}
 
 }
