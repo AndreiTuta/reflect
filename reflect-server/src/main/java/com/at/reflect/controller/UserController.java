@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.at.reflect.controller.service.UserService;
 import com.at.reflect.model.entity.user.User;
 
+/**
+ *
+ * @author at
+ */
 @Controller
 @RequestMapping(value = "/api/v1/user")
 public class UserController {
