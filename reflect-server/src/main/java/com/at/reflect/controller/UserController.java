@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.at.reflect.controller.service.UserService;
-import com.at.reflect.model.entity.User;
+import com.at.reflect.model.entity.user.User;
 
 @Controller
 @RequestMapping(value = "/api/v1/user")
@@ -20,60 +21,73 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	// Constants
-	private final String INVALID_CRED = "No params passed. Nothing has been executed";
 
-	@PostMapping(value = "/addUser")
+	@PostMapping(value = "/")
 	@ResponseBody
-	public ResponseEntity<String> addUsers(@RequestParam(required = true) final String userName,
-			@RequestParam(required = true) final String userPassword,
-			@RequestParam(required = false) final String userEmail) {
-		if (!StringUtils.isEmpty(userName) && !StringUtils.isEmpty(userPassword)) {
-			User user = userService.fetchUser(userName, userPassword, "");
-			if (user != null) {
-				return ResponseEntity.ok("User already exists");
-			} else {
-				User newUser = userService.createNewUser(userName, userPassword, userEmail);
-				return ResponseEntity.ok(userService.convertToResponse(newUser));
-			}
+	public ResponseEntity<?> addUsers(@PathVariable String userId,
+			@RequestParam(required = true) final String userEmail,
+			@RequestParam(required = true) final String userPassword) throws Exception {
+		User user = userService.processUser(userEmail, userPassword, userId);
+		if (user != null) {
+			return ResponseEntity.ok(userService.createNewUser(userEmail, userPassword));
 		}
-		return ResponseEntity.ok(INVALID_CRED);
-
+		throw new Exception();
 	}
 
-	@GetMapping(value = "/getUser")
+	@GetMapping(value = "/{userId}")
 	@ResponseBody
-	public ResponseEntity<String> logUsers(@RequestParam(required = true) final String userName,
-			@RequestParam(required = true) final String userPassword,
-			@RequestParam(required = false) final String userEmail, @RequestParam final boolean all) {
-		if (!StringUtils.isEmpty(userName) && !StringUtils.isEmpty(userPassword)) {
-			User user = userService.fetchUser(userName, userPassword, "");
-			if (user != null) {
-				if (all) {
-					return ResponseEntity.ok(userService.fetchAllUsers());
-				}
-				return ResponseEntity.ok(userService.convertToResponse(user));
-			} else {
-				return ResponseEntity.ok("Failed retrieving info for provided params");
-			}
+	public ResponseEntity<?> getUser(@PathVariable String userId,
+			@RequestParam(required = false, defaultValue = "") final String userEmail,
+			@RequestParam(required = false, defaultValue = "") final String userPassword) throws Exception {
+		User user = userService.processUser(userEmail, userPassword, userId);
+		if (user != null) {
+			return ResponseEntity.ok(user);
 		}
-		return ResponseEntity.ok(INVALID_CRED);
+		throw new Exception();
 	}
 
-	@PutMapping(value = "/updateUser")
+	@PutMapping(value = "/{userId}")
 	@ResponseBody
-	public ResponseEntity<String> udpateUsers(@RequestParam(required = true) final String userName,
-			@RequestParam(required = true) final String userPassword,
-			@RequestParam(required = false) final String userEmail) {
-		if (!StringUtils.isEmpty(userName) && !StringUtils.isEmpty(userPassword)) {
-			User user = userService.fetchUser(userName, userPassword, "");
-			if (user != null) {
-				User updatedUser = userService.updateExistingUser(userName, userPassword, userEmail, user);
-				return ResponseEntity.ok(userService.convertToResponse(updatedUser));
-			} else {
-				return ResponseEntity.ok("Failed retrieving info for provided params");
-			}
+	public ResponseEntity<?> udpateUsers(@PathVariable String userId,
+			@RequestParam(required = false, defaultValue = "") final String userEmail,
+			@RequestParam(required = false, defaultValue = "") final String userPassword,
+			@RequestParam(required = false, defaultValue = "") final String updatedUserEmail,
+			@RequestParam(required = false, defaultValue = "") final String updatedUserPassword,
+			@RequestParam(required = false, defaultValue = "") final String updatedUserName) throws Exception {
+		User user = userService.processUser(userEmail, userPassword, userId);
+		if (user != null) {
+			return ResponseEntity
+					.ok(userService.updateExistingUser(updatedUserEmail, updatedUserPassword, updatedUserName, user));
 		}
-		return ResponseEntity.ok(INVALID_CRED);
+		throw new Exception();
+	}
+
+//	TODO: Delete account
+//	@DeleteMapping(value = "/user")
+//	@ResponseBody
+//	public ResponseEntity<User> removeUser(@RequestParam(required = true) final String userEmail,
+//			@RequestParam(required = true) final String userPassword) {
+//		User user = userService.validateReqParams(userEmail, userPassword);
+//		if (user != null) {
+//			return ResponseEntity.ok(user);
+//		} else {
+//			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+//		}
+//	}
+
+//	TODO: List all user accounts
+//	 
+//	Needed for mobile dev. Pass for now, will redo 
+//	PASS-Reference: 001
+//	
+	@GetMapping(value = "/users")
+	@ResponseBody
+	public ResponseEntity<?> logUsers(@RequestParam(required = true) final String userEmail,
+			@RequestParam(required = true) final String userPassword) throws Exception {
+		User user = userService.fetchUser(userEmail, userPassword, "");
+		if (user != null) {
+			return ResponseEntity.ok(userService.fetchAllUsers());
+		}
+		throw new Exception();
 	}
 }

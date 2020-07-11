@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.at.reflect.common.utils.JsonUtil;
-import com.at.reflect.model.entity.Meditation;
-import com.at.reflect.model.entity.SubMeditation;
+import com.at.reflect.model.entity.meditation.Meditation;
+import com.at.reflect.model.entity.meditation.SubMeditation;
 import com.at.reflect.model.repository.MeditationRepository;
 import com.at.reflect.model.repository.SubMeditationRepository;
 import com.google.gson.JsonElement;

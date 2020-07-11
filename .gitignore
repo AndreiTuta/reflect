@@ -36,3 +36,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/reflect-spring-key.pem
+/ubuntu@ec2-52-17-62-66.eu-west-1.compute.amazonaws.com

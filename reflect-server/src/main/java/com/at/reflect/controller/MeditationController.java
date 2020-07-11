@@ -3,6 +3,8 @@ package com.at.reflect.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.tools.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.trace.http.HttpTrace.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.at.reflect.controller.service.MeditationService;
-import com.at.reflect.model.entity.Meditation;
+import com.at.reflect.model.entity.meditation.Meditation;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,7 +41,7 @@ public class MeditationController {
 			String meditation = meditationService.createNewMeditation(medJsonString);
 			return ResponseEntity.ok(meditation.toString());
 		}
-		return ResponseEntity.ok(INVALID_CRED);
+		return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 
 	}
 
@@ -48,7 +50,7 @@ public class MeditationController {
 	public ResponseEntity<String> fetchMeditation(@RequestParam final String meditationName,
 			@RequestParam final boolean all) {
 		if (!StringUtils.isEmpty(meditationName)) {
-			if(all) {
+			if (all) {
 				return ResponseEntity.ok(meditationService.fetchAllMeditations(true));
 			}
 			Meditation meditation = meditationService.fetchMeditationByName(meditationName);
