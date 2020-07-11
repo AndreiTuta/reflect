@@ -24,8 +24,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 public class UserMeditation {
-	@Column(name = "id")
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	private Integer id;
 	@PrimaryKeyJoinColumn
 	@Column(name = "user_id")
