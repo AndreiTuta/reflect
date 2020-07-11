@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,29 +25,27 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@PostMapping(value = "/{userId}")
+	@PostMapping(value = "/")
 	@ResponseBody
-	public ResponseEntity<User> addUsers(@PathVariable String userId,
-			@RequestParam(required = true) final String userEmail,
-			@RequestParam(required = true) final String userPassword) {
+	public ResponseEntity<User> addUsers(@RequestParam(required = true) final String userEmail,
+			@RequestParam(required = true) final String userPassword) throws Exception {
 		User user = userService.validateReqParams(userEmail, userPassword);
 		if (user != null) {
 			return ResponseEntity.ok(userService.createNewUser(userEmail, userPassword));
 		}
-		return new ResponseEntity<User>(HttpStatus.CONFLICT);
+		throw new Exception();
 	}
 
 	@GetMapping(value = "/{userId}")
 	@ResponseBody
 	public ResponseEntity<User> getUser(@PathVariable String userId,
 			@RequestParam(required = true) final String userEmail,
-			@RequestParam(required = true) final String userPassword) {
+			@RequestParam(required = true) final String userPassword) throws Exception {
 		User user = userService.validateReqParams(userEmail, userPassword);
 		if (user != null) {
 			return ResponseEntity.ok(user);
-		} else {
-			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
 		}
+		throw new Exception();
 	}
 
 	@PutMapping(value = "/{userId}")
@@ -56,14 +55,13 @@ public class UserController {
 			@RequestParam(required = true) final String userPassword,
 			@RequestParam(required = false, defaultValue = "") final String updatedUserEmail,
 			@RequestParam(required = false, defaultValue = "") final String updatedUserPassword,
-			@RequestParam(required = false, defaultValue = "") final String updatedUserName) {
+			@RequestParam(required = false, defaultValue = "") final String updatedUserName) throws Exception {
 		User user = userService.validateReqParams(userEmail, userPassword);
 		if (user != null) {
 			return ResponseEntity
 					.ok(userService.updateExistingUser(updatedUserEmail, updatedUserPassword, updatedUserName, user));
-		} else {
-			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
 		}
+		throw new Exception();
 	}
 
 //	TODO: Delete account
@@ -87,12 +85,11 @@ public class UserController {
 	@GetMapping(value = "/users")
 	@ResponseBody
 	public ResponseEntity<List<User>> logUsers(@RequestParam(required = true) final String userEmail,
-			@RequestParam(required = true) final String userPassword) {
+			@RequestParam(required = true) final String userPassword) throws Exception {
 		User user = userService.validateReqParams(userEmail, userPassword);
 		if (user != null) {
 			return ResponseEntity.ok(userService.fetchAllUsers());
-		} else {
-			return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
 		}
+		throw new Exception();
 	}
 }

@@ -2,6 +2,7 @@ package com.at.reflect.model.entity.meditation;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -24,6 +25,7 @@ import lombok.Setter;
 @Setter
 public class UserMeditation {
 	@Column(name = "id")
+	@Id
 	private Integer id;
 	@PrimaryKeyJoinColumn
 	@Column(name = "user_id")
