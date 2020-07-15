@@ -18,7 +18,7 @@ import lombok.Setter;
  * @author at
  */
 @Entity
-@Table(name = "rft_submeditation")
+@Table(name = "submeditation")
 @Data
 @Getter
 @NoArgsConstructor

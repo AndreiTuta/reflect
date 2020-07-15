@@ -8,7 +8,7 @@ CREATE TABLE `user` (
 );
 
 CREATE TABLE `meditation` (
-    `id` INT NOT NULL,
+    `id` INT NOT NULL AUTO_INCREMENT,
     `available` BIT(1) DEFAULT NULL,
     `duration` VARCHAR(255) DEFAULT NULL,
     `name` VARCHAR(255) DEFAULT NULL,
