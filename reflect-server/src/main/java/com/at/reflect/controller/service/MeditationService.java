@@ -55,7 +55,7 @@ public class MeditationService implements Service {
         return modelMapper.map(submeditation, SubmeditationResponse.class);
     }
 
-    public boolean updateMeditation(String meditationId, MeditationRequest meditationRequest) throws NotFoundException {
+    public void updateMeditation(String meditationId, MeditationRequest meditationRequest) throws NotFoundException {
         try {
             int id = Integer.parseInt(meditationId);
             fetchMeditationById(id)
@@ -65,7 +65,6 @@ public class MeditationService implements Service {
             final Meditation meditation = modelMapper.map(meditationRequest, Meditation.class);
             meditation.setId(id);
             meditationDao.update(meditation);
-            return true;
         } catch (NumberFormatException e) {
             throw new PathException("meditationId on path must be an integer");
         }
@@ -75,18 +74,18 @@ public class MeditationService implements Service {
         return Optional.ofNullable(meditationDao.findById(id));
     }
 
-    public void updateMeditation(final Meditation meditation) {
-        meditationDao.update(meditation);
-    }
-
     public List<Meditation> fetchMeditationByName(final String meditationName) {
         return meditationDao.fetchByName(meditationName);
     }
 
+    public void updateMeditation(final Meditation meditation) {
+        meditationDao.update(meditation);
+    }
+
     public Map<Integer, List<Submeditation>> fetchSubmeditations(final List<Meditation> meditations) {
-        return fetchSubmeditationsByMedId(meditations.stream()
-                                                     .map(m -> m.getId())
-                                                     .collect(Collectors.toList()));
+        return submeditationDao.fetchByMedId(meditations.stream()
+                                                        .map(m -> m.getId())
+                                                        .collect(Collectors.toList()));
     }
 
     public Map<Integer, List<Submeditation>> fetchSubmeditationsByMedId(final List<Integer> meditationsId) {
@@ -96,8 +95,8 @@ public class MeditationService implements Service {
     public void saveSubmeditations(final List<Submeditation> submeditations, final Optional<Integer> medId) {
         medId.ifPresent(id -> {
             submeditations.forEach(sm -> sm.setParentMeditationId(id));
+            saveSubMeditations(submeditations);
         });
-        saveSubMeditations(submeditations);
     }
 
     public void saveSubMeditations(final List<Submeditation> submeditations) {
