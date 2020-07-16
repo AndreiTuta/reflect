@@ -1,10 +1,11 @@
 package com.at.reflect.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.at.reflect.error.exception.NotFoundException;
 import com.at.reflect.error.exception.PathException;
@@ -20,21 +21,24 @@ public class GlobalExceptionController {
     private final ErrorResponseFactory errorResponseFactory;
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> notFound(NotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                             .body(errorResponseFactory.buildError(e, HttpStatus.NOT_FOUND));
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404
+    @ResponseBody
+    public ErrorResponse notFound(NotFoundException e) {
+        return errorResponseFactory.buildError(e, HttpStatus.NOT_FOUND);
     }
-    
+
     @ExceptionHandler(PathException.class)
-    public ResponseEntity<ErrorResponse> pathExceptions(PathException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                             .body(errorResponseFactory.buildError(e, HttpStatus.BAD_REQUEST));
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    @ResponseBody
+    public ErrorResponse pathExceptions(PathException e) {
+        return errorResponseFactory.buildError(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> methodArgumentvalidationException(MethodArgumentNotValidException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                             .body(errorResponseFactory.throwNewError(HttpStatus.BAD_REQUEST, e.getBindingResult()));
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    @ResponseBody
+    public ErrorResponse methodArgumentvalidationException(MethodArgumentNotValidException e) {
+        return errorResponseFactory.throwNewError(HttpStatus.BAD_REQUEST, e.getBindingResult());
     }
 
     /*
@@ -42,8 +46,10 @@ public class GlobalExceptionController {
      * Update to return relevant information
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> unHandledExceptions(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseFactory.buildError(e));
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
+    @ResponseBody
+    public ErrorResponse unHandledExceptions(Exception e) {
+        return errorResponseFactory.buildError(e);
     }
 
 }
