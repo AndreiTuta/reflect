@@ -30,8 +30,7 @@ public class MeditationService implements Service {
 
     public MeditationResponse createMeditation(MeditationRequest meditationRequest) {
         final Meditation meditation = modelMapper.map(meditationRequest, Meditation.class);
-        int id = meditationDao.insertReturnId(meditation);
-        meditation.setId(id);
+        meditationDao.insert(meditation);
         return buildMeditationResponse(meditation).build();
     }
 

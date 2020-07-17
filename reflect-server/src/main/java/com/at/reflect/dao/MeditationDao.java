@@ -16,11 +16,11 @@ public class MeditationDao extends com.reflect.generated.tables.daos.MeditationD
         this.dsl = dsl;
     }
 
-    public int insertReturnId(final Meditation meditation) {
-        return dsl.insertInto(Tables.MEDITATION)
-                  .set(dsl.newRecord(Tables.MEDITATION, meditation))
-                  .returningResult(Tables.MEDITATION.ID)
-                  .fetchOne()
-                  .into(int.class);
-    }
+//    public int insertReturnId(final Meditation meditation) {
+//        return dsl.insertInto(Tables.MEDITATION)
+//                  .set(dsl.newRecord(Tables.MEDITATION, meditation))
+//                  .returningResult(Tables.MEDITATION.ID)
+//                  .fetchOne()
+//                  .into(int.class);
+//    }
 }
