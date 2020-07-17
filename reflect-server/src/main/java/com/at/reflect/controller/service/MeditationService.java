@@ -57,13 +57,12 @@ public class MeditationService implements Service {
     public void updateMeditation(String meditationId, MeditationRequest meditationRequest) throws NotFoundException {
         try {
             int id = Integer.parseInt(meditationId);
-            fetchMeditationById(id)
-                                   .orElseThrow(() -> new NotFoundException("Meditation with id: " + meditationId
-                                       + " not found"));
+            fetchMeditationById(id).orElseThrow(() -> new NotFoundException("Meditation with id: " + meditationId
+                + " not found"));
 
             final Meditation meditation = modelMapper.map(meditationRequest, Meditation.class);
             meditation.setId(id);
-            meditationDao.update(meditation);
+            updateMeditation(meditation);
         } catch (NumberFormatException e) {
             throw new PathException("meditationId on path must be an integer");
         }
