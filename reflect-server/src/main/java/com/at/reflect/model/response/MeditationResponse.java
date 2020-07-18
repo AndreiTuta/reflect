@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class MeditationResponse {
 
     private Integer id;
-    private Boolean available;
+    private Boolean isAvailable;
     private String duration;
     private String name;
     private String address;

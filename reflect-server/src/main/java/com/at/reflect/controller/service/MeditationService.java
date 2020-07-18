@@ -109,7 +109,7 @@ public class MeditationService implements Service {
                                  .address(meditation.getAddress())
                                  .numMed(meditation.getNumMed())
                                  .preview(meditation.getPreview())
-                                 .available(meditation.getAvailable());
+                                 .isAvailable(meditation.getAvailable());
     }
 
     @Override
