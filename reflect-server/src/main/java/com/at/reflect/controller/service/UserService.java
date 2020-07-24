@@ -1,98 +1,30 @@
 package com.at.reflect.controller.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import com.at.reflect.model.entity.user.User;
-import com.at.reflect.model.repository.UserRepository;
+import com.at.reflect.dao.UserDao;
+import com.at.reflect.error.exception.NotFoundException;
+import com.at.reflect.error.exception.PathException;
+import com.at.reflect.model.request.UserRequest;
+import com.at.reflect.model.response.UserResponse;
+import com.reflect.generated.tables.pojos.User;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService implements Service {
-	@Autowired
-	private UserRepository userRepository;
+	private final UserDao userDao;
+	private final ModelMapper modelMapper;
 
-	public List<User> fetchAllUsers() {
-		return StreamSupport.stream(userRepository.findAll().spliterator(), false).collect(Collectors.toList());
-	}
-
-	public User fetchUser(final String userEmail, final String userPassword, final String id) {
-		if (!StringUtils.isEmpty(userEmail) && !StringUtils.isEmpty(userPassword)) {
-			return fetchUserByEmailAndPassword(userEmail, userPassword);
-		} else if (!StringUtils.isEmpty(id)) {
-			return userRepository.findById(Integer.valueOf(id)).orElse(null);
-		}
-		return null;
-	}
-
-	public User fetchUserById(final String id) {
-		return fetchUser("", "", id);
-	}
-
-	public User fetchUserByEmailAndPassword(final String email, final String password) {
-		if (!StringUtils.isEmpty(email) && !StringUtils.isEmpty(password)) {
-			return StreamSupport.stream(userRepository.findAll().spliterator(), false)
-					.filter(u -> email.equals(u.getEmail()) && password.equals(u.getPassword())).findAny().orElse(null);
-		}
-		return null;
-	}
-
-	public User fetchUserBySecret(final String secret) {
-		if (!StringUtils.isEmpty(secret)) {
-			return StreamSupport.stream(userRepository.findAll().spliterator(), false)
-					.filter(u -> secret.equals(u.getEmail())).findAny().orElse(null);
-		}
-		return null;
-	}
-
-	public User createNewUser(String userEmail, String userPassword) {
-		User user = null;
-		if (!StringUtils.isEmpty(userEmail) && !StringUtils.isEmpty(userPassword)) {
-			user = fetchUserByEmailAndPassword(userEmail, userPassword);
-			if (user == null) {
-				user = new User();
-				user.setPassword(userPassword);
-				user.setEmail(userEmail);
-				return createNewUser(user);
-			}
-		}
-		return user;
-	}
-
-	public User createNewUser(final User newUser) {
-		if (newUser != null) {
-			newUser.setCreated(LocalDateTime.now().toString());
-			return userRepository.save(newUser);
-		}
-		return null;
-	}
-
-	// TODO: Take a look
-	// https://www.baeldung.com/spring-data-jpa-modifying-annotation
-	public User updateExistingUser(final String updatedUserEmail, final String updatedUserPassword,
-			final String updatedUserName, final User user) {
-		if (user != null) {
-			if (!StringUtils.isEmpty(updatedUserEmail)) {
-				user.setEmail(updatedUserEmail);
-			}
-			if (!StringUtils.isEmpty(updatedUserPassword)) {
-				user.setPassword(updatedUserPassword);
-			}
-			if (!StringUtils.isEmpty(updatedUserName)) {
-				user.setName(updatedUserName);
-			}
-			user.setLast_updated(LocalDateTime.now().toString());
-			userRepository.save(user);
-		}
-		return user;
+	private UserResponse.UserResponseBuilder buildUserResponse(final User user) {
+		return UserResponse.builder().id(user.getId()).created(user.getCreated().toString()).email(user.getEmail())
+				.last_updated(user.getLastUdpated()).name(user.getName()).password(user.getPassword());
 	}
 
 	@Override
@@ -100,12 +32,30 @@ public class UserService implements Service {
 		return ServiceType.USER;
 	}
 
-	/**
-	 * @param userEmail
-	 * @param userPassword
-	 * @param userId       TODO
-	 */
-	public User processUser(final String userEmail, final String userPassword, String userId) {
-		return fetchUser(userEmail, userPassword, userId);
+	public UserResponse createUser(@Valid UserRequest userRequest) {
+		final User user = modelMapper.map(userRequest, User.class);
+		userDao.insert(user);
+		return buildUserResponse(user).build();
+	}
+
+	public void updateUser(String userId, @Valid UserRequest userRequest) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public UserResponse fetchUserById(String userId) throws NotFoundException {
+		try {
+			int id = Integer.parseInt(userId);
+			final User user = fetchUserById(id)
+					.orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found"));
+			return buildUserResponse(user).build();
+		} catch (NumberFormatException e) {
+			throw new PathException("meditationId on path must be an integer");
+		}
+	}
+
+	public Optional<User> fetchUserById(final Integer id) {
+		return Optional.ofNullable(userDao.findById(id));
+
 	}
 }
