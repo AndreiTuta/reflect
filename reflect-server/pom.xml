@@ -22,7 +22,7 @@
 		<maven.compiler.target>11</maven.compiler.target>
 		<db.user>root</db.user>
 		<db.password>password</db.password>
-		<db.url>jdbc:mysql://localhost:3306/reflect</db.url>
+		<db.url>jdbc:mysql://localhost:3306/reflect?serverTimezone=GMT</db.url>
 		<db.driver>com.mysql.cj.jdbc.Driver</db.driver>
 	</properties>
 
@@ -52,14 +52,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
