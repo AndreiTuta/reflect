@@ -1,147 +1,120 @@
 package com.at.reflect.controller.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import com.at.reflect.common.utils.JsonUtil;
-import com.at.reflect.model.entity.meditation.Meditation;
-import com.at.reflect.model.entity.meditation.SubMeditation;
-import com.at.reflect.model.repository.MeditationRepository;
-import com.at.reflect.model.repository.SubMeditationRepository;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.at.reflect.dao.MeditationDao;
+import com.at.reflect.dao.SubmeditationDao;
+import com.at.reflect.error.exception.NotFoundException;
+import com.at.reflect.error.exception.PathException;
+import com.at.reflect.model.request.MeditationRequest;
+import com.at.reflect.model.response.MeditationResponse;
+import com.at.reflect.model.response.SubmeditationResponse;
+import com.reflect.generated.tables.pojos.Meditation;
+import com.reflect.generated.tables.pojos.Submeditation;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MeditationService implements Service {
-	@Autowired
-	private MeditationRepository meditationRepository;
-	@Autowired
-	private SubMeditationRepository subMeditationRepository;
 
-	public String createNewMeditation(final String newMeditation) {
-		String response = "";
-		Meditation meditation = convertToMeditation(JsonParser.parseString(newMeditation).getAsJsonObject());
-		if (meditation != null) {
-			return meditation.toString();
-		}
-		return response;
-	}
+    private final MeditationDao meditationDao;
+    private final SubmeditationDao submeditationDao;
+    private final ModelMapper modelMapper;
 
-	private Meditation convertToMeditation(final JsonObject newMeditation) {
-		Meditation meditation = createNewMeditation(newMeditation.get("name"), newMeditation.get("duration"),
-				newMeditation.get("address"), newMeditation.get("preview"),
-				JsonUtil.toBoolean(newMeditation.get("isAvailable")),
-				JsonUtil.toSubMeditationList(newMeditation.getAsJsonArray("subMeditations")));
-		return meditation;
-	}
+    public MeditationResponse createMeditation(MeditationRequest meditationRequest) {
+        final Meditation meditation = modelMapper.map(meditationRequest, Meditation.class);
+        meditationDao.insert(meditation);
+        return buildMeditationResponse(meditation).build();
+    }
 
-	public Meditation createNewMeditation(final JsonElement name, final JsonElement duration, final JsonElement address,
-			final JsonElement preview, final boolean isAvailable, final List<SubMeditation> subMeditations) {
-		Meditation meditation = new Meditation();
-		meditation.setName(name.getAsString());
-		meditation.setDuration(duration.getAsString());
-		meditation.setAddress(address.getAsString());
-		meditation.setPreview(preview.getAsString());
-		meditation.setAvailable(isAvailable);
-		meditation.setNumMed(subMeditations.size());
-		meditation = meditationRepository.save(meditation);
-		saveSubMeditationsForMeditation(subMeditations, meditation);
-		meditation.setSubmeditations(fetchSubMeditationsList(meditation.getId()));
-		return meditation;
-	}
+    public MeditationResponse fetchMeditationById(String meditationId) throws NotFoundException {
+        try {
+            int id = Integer.parseInt(meditationId);
+            final Meditation meditation = fetchMeditationById(id).orElseThrow(() -> new NotFoundException("Meditation with id: "
+                + meditationId + " not found"));
+            List<SubmeditationResponse> submeditations = submeditationDao.fetchByParentMeditationId(id)
+                                                                         .stream()
+                                                                         .map(this::convert)
+                                                                         .collect(Collectors.toList());
+            return buildMeditationResponse(meditation).submeditations(submeditations)
+                                                      .build();
+        } catch (NumberFormatException e) {
+            throw new PathException("meditationId on path must be an integer");
+        }
+    }
 
-	/**
-	 * @param subMeditations
-	 * @param meditation
-	 */
-	public void saveSubMeditationsForMeditation(final List<SubMeditation> subMeditations, final Meditation meditation) {
-		for (SubMeditation subMeditation : subMeditations) {
-			createNewSubMeditation(meditation.getId(), subMeditation.getName(),
-					subMeditation.getMeditationPlayerAdress(), subMeditation.getMeditationAudioadress());
-		}
-	}
+    private SubmeditationResponse convert(Submeditation submeditation) {
+        return modelMapper.map(submeditation, SubmeditationResponse.class);
+    }
 
-	public SubMeditation createNewSubMeditation(final Integer parentMeditationId, final String name,
-			final String meditationPlayerAdress, final String meditationAudioadress) {
-		SubMeditation subMeditation = new SubMeditation();
-		subMeditation.setParentMeditationId(parentMeditationId);
-		subMeditation.setName(name);
-		subMeditation.setMeditationPlayerAdress(meditationPlayerAdress);
-		subMeditation.setMeditationAudioadress(meditationAudioadress);
-		subMeditationRepository.save(subMeditation);
-		return subMeditation;
-	}
+    public void updateMeditation(String meditationId, MeditationRequest meditationRequest) throws NotFoundException {
+        try {
+            int id = Integer.parseInt(meditationId);
+            fetchMeditationById(id).orElseThrow(() -> new NotFoundException("Meditation with id: " + meditationId
+                + " not found"));
 
-	public Meditation fetchMeditationByName(final String meditationName) {
-		Meditation meditation = fetchMeditation(meditationName);
-		return meditation;
-	}
+            final Meditation meditation = modelMapper.map(meditationRequest, Meditation.class);
+            meditation.setId(id);
+            updateMeditation(meditation);
+        } catch (NumberFormatException e) {
+            throw new PathException("meditationId on path must be an integer");
+        }
+    }
 
-	public Meditation fetchMeditation(final String meditationName) {
-		Meditation meditation = StreamSupport.stream(meditationRepository.findAll().spliterator(), false)
-				.filter(med -> med.getName().equals(meditationName)).findAny().orElse(null);
-		if (meditation != null) {
-			meditation.setSubmeditations(fetchSubMeditationsList(meditation.getId()));
-		}
-		return meditation;
-	}
+    public Optional<Meditation> fetchMeditationById(final Integer id) {
+        return Optional.ofNullable(meditationDao.findById(id));
+    }
 
-	public String fetchAllMeditations() {
-		Iterable<Meditation> meditations = meditationRepository.findAll();
-		meditations.forEach(meditation -> {
-			meditation.setSubmeditations(fetchSubMeditationsList(meditation.getId()));
-		});
-		return JsonUtil.meditationsToJsonObject(meditations).toString();
-	}
+    public List<Meditation> fetchMeditationByName(final String meditationName) {
+        return meditationDao.fetchByName(meditationName);
+    }
 
-	public String fetchAllMeditations(boolean skipPreview) {
-		Iterable<Meditation> meditations = meditationRepository.findAll();
-		meditations.forEach(meditation -> {
-			if (skipPreview) {
-				meditation.setPreview("skipped");
-			}
-			meditation.setSubmeditations(fetchSubMeditationsList(meditation.getId()));
-		});
-		String string = JsonUtil.meditationsToJsonObject(meditations).toString();
-		string = string.replaceAll("\\\\", "");
-		return string;
-	}
+    public void updateMeditation(final Meditation meditation) {
+        meditationDao.update(meditation);
+    }
 
-	private List<SubMeditation> fetchSubMeditationsList(final Integer id) {
-		List<SubMeditation> meditationSubMeditations = StreamSupport
-				.stream(subMeditationRepository.findAll().spliterator(), false)
-				.filter(subMed -> subMed.getParentMeditationId() == id).collect(Collectors.toList());
-		return meditationSubMeditations;
-	}
+    public Map<Integer, List<Submeditation>> fetchSubmeditations(final List<Meditation> meditations) {
+        return submeditationDao.fetchByMedId(meditations.stream()
+                                                        .map(m -> m.getId())
+                                                        .collect(Collectors.toList()));
+    }
 
-	public void updateMeditation(final String meditationName, final String meditationDuration,
-			final boolean isAvailable, Meditation meditation) {
-		meditation.setName(meditationName);
-		meditation.setDuration(meditationDuration);
-		meditation.setAvailable(isAvailable);
-		meditationRepository.save(meditation);
-	}
+    public Map<Integer, List<Submeditation>> fetchSubmeditationsByMedId(final List<Integer> meditationsId) {
+        return submeditationDao.fetchByMedId(meditationsId);
+    }
 
-	public Meditation fetchMeditationById(final String id) {
-		Meditation meditation = meditationRepository.findById(Integer.valueOf(id)).orElse(null);
-		return meditation;
-	}
+    public void saveSubmeditations(final List<Submeditation> submeditations, final Optional<Integer> medId) {
+        medId.ifPresent(id -> {
+            submeditations.forEach(sm -> sm.setParentMeditationId(id));
+            saveSubMeditations(submeditations);
+        });
+    }
 
-	public String converToResponse(final Meditation meditation) {
-		return meditation.toString();
-	}
+    public void saveSubMeditations(final List<Submeditation> submeditations) {
+        submeditationDao.save(submeditations);
+    }
 
-	@Override
-	public ServiceType getType() {
-		return ServiceType.MED;
-	}
+    private MeditationResponse.MeditationResponseBuilder buildMeditationResponse(final Meditation meditation) {
+        return MeditationResponse.builder()
+                                 .id(meditation.getId())
+                                 .name(meditation.getName())
+                                 .duration(meditation.getDuration())
+                                 .address(meditation.getAddress())
+                                 .numMed(meditation.getNumMed())
+                                 .preview(meditation.getPreview())
+                                 .isAvailable(meditation.getAvailable());
+    }
+
+    @Override
+    public ServiceType getType() {
+        return ServiceType.MED;
+    }
 
 }

@@ -19,7 +19,7 @@ import lombok.Setter;
  * @author at
  */
 @Entity
-@Table(name = "rft_user_meditation")
+@Table(name = "user_meditation")
 @Data
 @Getter
 @NoArgsConstructor

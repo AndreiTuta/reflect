@@ -18,7 +18,7 @@ import lombok.Setter;
  * @author at
  */
 @Entity
-@Table(name = "rft_user")
+@Table(name = "user")
 @Data
 @Getter
 @NoArgsConstructor
