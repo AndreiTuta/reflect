@@ -3,12 +3,14 @@ package com.at.reflect.dao;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import com.reflect.generated.tables.daos.UserDao;
+
 @Repository
-public class UserDao extends com.reflect.generated.tables.daos.UserDao {
+public class UserDaoImplementation extends UserDao {
 
 	private final DSLContext dsl;
 
-	public UserDao(final DSLContext dsl) {
+	public UserDaoImplementation(final DSLContext dsl) {
 		super(dsl.configuration());
 		this.dsl = dsl;
 	}

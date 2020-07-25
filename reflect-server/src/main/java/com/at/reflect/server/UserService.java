@@ -1,4 +1,4 @@
-package com.at.reflect.controller.service;
+package com.at.reflect.server;
 
 import java.util.Optional;
 
@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import com.at.reflect.dao.UserDao;
+import com.at.reflect.dao.UserDaoImplementation;
 import com.at.reflect.error.exception.NotFoundException;
 import com.at.reflect.error.exception.PathException;
 import com.at.reflect.model.request.UserRequest;
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class UserService implements Service {
-	private final UserDao userDao;
+	private final UserDaoImplementation userDao;
 	private final ModelMapper modelMapper;
 
 	private UserResponse.UserResponseBuilder buildUserResponse(final User user) {

@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.at.reflect.controller.service.MeditationService;
 import com.at.reflect.error.exception.NotFoundException;
 import com.at.reflect.model.request.MeditationRequest;
 import com.at.reflect.model.response.MeditationResponse;
+import com.at.reflect.server.MeditationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,32 +33,31 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Meditation API", description = "Rest API to interact with Mediation")
 public class MeditationController {
 
-    private final MeditationService meditationService;
+	private final MeditationService meditationService;
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MeditationResponse> addMeditation(@Valid @RequestBody MeditationRequest meditationRequest) {
-        log.debug("Creating new meditation...");
-        return ResponseEntity.status(HttpStatus.CREATED).body(meditationService.createMeditation(meditationRequest));
-    }
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MeditationResponse> addMeditation(@Valid @RequestBody MeditationRequest meditationRequest) {
+		log.debug("Creating new meditation...");
+		return ResponseEntity.status(HttpStatus.CREATED).body(meditationService.createMeditation(meditationRequest));
+	}
 
-    @GetMapping(value = "/{meditationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MeditationResponse> fetchMeditation(@PathVariable String meditationId) throws NotFoundException {
-        log.debug("Fetching meditation...");
-        return ResponseEntity.ok(meditationService.fetchMeditationById(meditationId));
-    }
+	@GetMapping(value = "/{meditationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MeditationResponse> fetchMeditation(@PathVariable String meditationId)
+			throws NotFoundException {
+		log.debug("Fetching meditation...");
+		return ResponseEntity.ok(meditationService.fetchMeditationById(meditationId));
+	}
 
-    @Operation(summary = "Update mediation by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204",
-                         description = "The entire mediation including submediations will be replaced, make sure to include all the fields (even the ones you're not changing)."
-                             + " Fields that's not beed included will be deleted.")
-    })
-    @PutMapping(value = "/{meditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void udpateMeditation(@PathVariable String meditationId,
-                                 @RequestBody @Valid MeditationRequest meditationRequest) throws NotFoundException {
-        log.debug("Updating meditation...");
-        meditationService.updateMeditation(meditationId, meditationRequest);
-    }
+	@Operation(summary = "Update mediation by ID")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "204", description = "The entire mediation including submediations will be replaced, make sure to include all the fields (even the ones you're not changing)."
+					+ " Fields that's not beed included will be deleted.") })
+	@PutMapping(value = "/{meditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	public void udpateMeditation(@PathVariable String meditationId,
+			@RequestBody @Valid MeditationRequest meditationRequest) throws NotFoundException {
+		log.debug("Updating meditation...");
+		meditationService.updateMeditation(meditationId, meditationRequest);
+	}
 
 }

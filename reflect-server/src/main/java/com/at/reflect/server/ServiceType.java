@@ -1,4 +1,4 @@
-package com.at.reflect.controller.service;
+package com.at.reflect.server;
 
 public enum ServiceType {
 

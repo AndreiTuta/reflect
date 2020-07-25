@@ -112,10 +112,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.at.reflect.controller.service.UserService;
 import com.at.reflect.error.exception.NotFoundException;
 import com.at.reflect.model.request.UserRequest;
 import com.at.reflect.model.response.UserResponse;
+import com.at.reflect.server.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
