@@ -12,6 +12,7 @@ import com.at.reflect.error.exception.PathException;
 import com.at.reflect.model.factory.ErrorResponseFactory;
 import com.at.reflect.model.response.ErrorResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @ControllerAdvice
@@ -45,6 +46,7 @@ public class GlobalExceptionController {
      * Use as a default exception to be thrown when the credentials are invalid TODO
      * Update to return relevant information
      */
+    @Operation(hidden = true)
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
     @ResponseBody

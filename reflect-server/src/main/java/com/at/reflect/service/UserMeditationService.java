@@ -1,4 +1,4 @@
-package com.at.reflect.server;
+package com.at.reflect.service;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import com.at.reflect.dao.MeditationDaoImplementation;
 import com.at.reflect.dao.SubmeditationDaoImplementation;
+import com.at.reflect.dao.UserDaoImplementation;
+import com.at.reflect.dao.UserMeditationDaoImplementation;
 import com.at.reflect.error.exception.NotFoundException;
 import com.at.reflect.error.exception.PathException;
 import com.at.reflect.model.request.MeditationRequest;
@@ -22,8 +24,10 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class MeditationService implements Service {
+public class UserMeditationService implements Service {
 
+	private final UserDaoImplementation userDao;
+	private final UserMeditationDaoImplementation userMeditationDao;
 	private final MeditationDaoImplementation meditationDao;
 	private final SubmeditationDaoImplementation submeditationDao;
 	private final ModelMapper modelMapper;
