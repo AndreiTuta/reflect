@@ -118,43 +118,40 @@ import com.at.reflect.model.response.UserResponse;
 import com.at.reflect.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping(value = "/api/v1/user")
+@RequestMapping(value = "/v1/user")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Meditation API", description = "Rest API to interact with Mediation")
+@Tag(name = "User API", description = "Rest API to interact with User")
 public class UserController {
 
-	private final UserService userService;
+    private final UserService userService;
 
-	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserResponse> addUser(@Valid @RequestBody UserRequest userRequest) {
-		log.debug("Creating new user...");
-		return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userRequest));
-	}
+    @Operation(summary = "Add a User")
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserResponse> addUser(@Valid @RequestBody UserRequest userRequest) {
+        log.debug("Creating new user...");
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userRequest));
+    }
 
-	@GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserResponse> fetchUser(@PathVariable String userId) throws NotFoundException {
-		log.debug("Fetching user...");
-		return ResponseEntity.ok(userService.fetchUserById(userId));
-	}
+    @Operation(summary = "Fetch User by ID")
+    @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserResponse> fetchUser(@PathVariable String userId) throws NotFoundException {
+        log.debug("Fetching user...");
+        return ResponseEntity.ok(userService.fetchUserById(userId));
+    }
 
-	@Operation(summary = "Update mediation by ID")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "204", description = "The entire mediation including submediations will be replaced, make sure to include all the fields (even the ones you're not changing)."
-					+ " Fields that's not beed included will be deleted.") })
-	@PutMapping(value = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void udpateUser(@PathVariable String userId, @RequestBody @Valid UserRequest userRequest)
-			throws NotFoundException {
-		log.debug("Updating user...");
-		userService.updateUser(userId, userRequest);
-	}
+    @Operation(summary = "Update User by ID")
+    @PutMapping(value = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void udpateUser(@PathVariable String userId, @RequestBody @Valid UserRequest userRequest)
+                                                                                                     throws NotFoundException {
+        log.debug("Updating user...");
+        userService.updateUser(userId, userRequest);
+    }
 
 }

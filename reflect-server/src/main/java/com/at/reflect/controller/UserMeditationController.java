@@ -20,14 +20,12 @@ import com.at.reflect.model.response.MeditationResponse;
 import com.at.reflect.service.MeditationService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping(value = "/api/v1/user-meditation")
+@RequestMapping(value = "/v1/user-meditation")
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "UserMeditation API", description = "Rest API to interact with UserMediation")
@@ -35,12 +33,14 @@ public class UserMeditationController {
 
     private final MeditationService meditationService;
 
+    @Operation(summary = "Post user mediation ")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MeditationResponse> addMeditation(@Valid @RequestBody MeditationRequest meditationRequest) {
         log.debug("Creating new meditation...");
         return ResponseEntity.status(HttpStatus.CREATED).body(meditationService.createMeditation(meditationRequest));
     }
 
+    @Operation(summary = "Fetch mediation by ID")
     @GetMapping(value = "/{meditationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MeditationResponse> fetchMeditation(@PathVariable String meditationId)
                                                                                                  throws NotFoundException {
@@ -49,10 +49,6 @@ public class UserMeditationController {
     }
 
     @Operation(summary = "Update mediation by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204",
-                         description = "The entire mediation including submediations will be replaced, make sure to include all the fields (even the ones you're not changing)."
-                             + " Fields that's not beed included will be deleted.") })
     @PutMapping(value = "/{meditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void udpateMeditation(@PathVariable String meditationId,

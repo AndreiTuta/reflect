@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SubmeditationResponse {
 
-    private Integer id;
     private String meditationAudioadress;
     private String meditationPlayerAdress;
     private String name;

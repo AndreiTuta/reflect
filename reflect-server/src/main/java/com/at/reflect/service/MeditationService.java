@@ -6,10 +6,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.expression.spel.ast.OpInc;
 import org.springframework.stereotype.Component;
 
-import com.at.reflect.dao.MeditationDaoImplementation;
-import com.at.reflect.dao.SubmeditationDaoImplementation;
+import com.at.reflect.dao.MeditationDao;
+import com.at.reflect.dao.SubmeditationDao;
 import com.at.reflect.error.exception.NotFoundException;
 import com.at.reflect.error.exception.PathException;
 import com.at.reflect.model.request.MeditationRequest;
@@ -24,13 +25,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MeditationService implements Service {
 
-    private final MeditationDaoImplementation meditationDao;
-    private final SubmeditationDaoImplementation submeditationDao;
+    private final MeditationDao meditationDao;
+    private final SubmeditationDao submeditationDao;
     private final ModelMapper modelMapper;
 
     public MeditationResponse createMeditation(MeditationRequest meditationRequest) {
         final Meditation meditation = modelMapper.map(meditationRequest, Meditation.class);
+        final List<Submeditation> submeditations = meditationRequest.getSubmeditations()
+                                                                    .stream()
+                                                                    .map(submeditation -> modelMapper.map(submeditation,
+                                                                                                          Submeditation.class))
+                                                                    .collect(Collectors.toList());
         meditationDao.insert(meditation);
+        saveSubmeditations(submeditations, Optional.of(meditation.getId()));
         return buildMeditationResponse(meditation).build();
     }
 
@@ -90,7 +97,9 @@ public class MeditationService implements Service {
 
     public void saveSubmeditations(final List<Submeditation> submeditations, final Optional<Integer> medId) {
         medId.ifPresent(id -> {
-            submeditations.forEach(sm -> sm.setParentMeditationId(id));
+            submeditations.forEach(sm -> {
+                sm.setParentMeditationId(id);
+            });
             saveSubMeditations(submeditations);
         });
     }
@@ -107,7 +116,7 @@ public class MeditationService implements Service {
                                  .address(meditation.getAddress())
                                  .numMed(meditation.getNumMed())
                                  .preview(meditation.getPreview())
-                                 .available(meditation.getAvailable());
+                                 .isAvailable(meditation.getAvailable());
     }
 
     @Override
