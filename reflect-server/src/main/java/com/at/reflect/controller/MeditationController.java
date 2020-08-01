@@ -51,10 +51,10 @@ public class MeditationController {
     @Operation(summary = "Update mediation by ID")
     @PutMapping(value = "/{meditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void udpateMeditation(@PathVariable String meditationId,
-                                 @RequestBody @Valid MeditationRequest meditationRequest) throws NotFoundException {
+    public ResponseEntity<MeditationResponse> udpateMeditation(@PathVariable String meditationId,
+                                                               @RequestBody @Valid MeditationRequest meditationRequest) throws NotFoundException {
         log.debug("Updating meditation...");
-        meditationService.updateMeditation(meditationId, meditationRequest);
+        return ResponseEntity.ok(meditationService.updateMeditation(meditationId, meditationRequest));
     }
 
 }

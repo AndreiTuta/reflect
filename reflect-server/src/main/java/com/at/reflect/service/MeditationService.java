@@ -5,19 +5,24 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.expression.spel.ast.OpInc;
 import org.springframework.stereotype.Component;
 
 import com.at.reflect.dao.MeditationDao;
 import com.at.reflect.dao.SubmeditationDao;
+import com.at.reflect.dao.UserMeditationDao;
 import com.at.reflect.error.exception.NotFoundException;
 import com.at.reflect.error.exception.PathException;
 import com.at.reflect.model.request.MeditationRequest;
+import com.at.reflect.model.request.UserMeditationRequest;
 import com.at.reflect.model.response.MeditationResponse;
 import com.at.reflect.model.response.SubmeditationResponse;
+import com.at.reflect.model.response.UserMeditationResponse;
 import com.reflect.generated.tables.pojos.Meditation;
 import com.reflect.generated.tables.pojos.Submeditation;
+import com.reflect.generated.tables.pojos.UserMeditation;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +32,7 @@ public class MeditationService implements Service {
 
     private final MeditationDao meditationDao;
     private final SubmeditationDao submeditationDao;
+    private final UserMeditationDao userMeditationDao;
     private final ModelMapper modelMapper;
 
     public MeditationResponse createMeditation(MeditationRequest meditationRequest) {
@@ -39,6 +45,12 @@ public class MeditationService implements Service {
         meditationDao.insert(meditation);
         saveSubmeditations(submeditations, Optional.of(meditation.getId()));
         return buildMeditationResponse(meditation).build();
+    }
+
+    public UserMeditationResponse createUserMeditation(UserMeditationRequest userMeditationRequest) {
+        final UserMeditation userMeditation = modelMapper.map(userMeditationRequest, UserMeditation.class);
+        userMeditationDao.insertUserMeditation(userMeditation);
+        return buildUserMeditationResponse(userMeditation).build();
     }
 
     public MeditationResponse fetchMeditationById(String meditationId) throws NotFoundException {
@@ -57,11 +69,23 @@ public class MeditationService implements Service {
         }
     }
 
+    public UserMeditationResponse fetchUserMeditationById(String userMeditationId) throws NotFoundException {
+        try {
+            int id = Integer.parseInt(userMeditationId);
+            final UserMeditation userMeditation = fetchUserMeditationById(id)
+                                                                             .orElseThrow(() -> new NotFoundException("User meditation with id: "
+                                                                                 + userMeditationId + " not found"));
+            return buildUserMeditationResponse(userMeditation).build();
+        } catch (NumberFormatException e) {
+            throw new PathException("meditationId on path must be an integer");
+        }
+    }
+
     private SubmeditationResponse convert(Submeditation submeditation) {
         return modelMapper.map(submeditation, SubmeditationResponse.class);
     }
 
-    public void updateMeditation(String meditationId, MeditationRequest meditationRequest) throws NotFoundException {
+    public MeditationResponse updateMeditation(String meditationId, MeditationRequest meditationRequest) throws NotFoundException {
         try {
             int id = Integer.parseInt(meditationId);
             fetchMeditationById(id)
@@ -70,6 +94,7 @@ public class MeditationService implements Service {
             final Meditation meditation = modelMapper.map(meditationRequest, Meditation.class);
             meditation.setId(id);
             updateMeditation(meditation);
+            return buildMeditationResponse(meditation).build();
         } catch (NumberFormatException e) {
             throw new PathException("meditationId on path must be an integer");
         }
@@ -77,6 +102,11 @@ public class MeditationService implements Service {
 
     public Optional<Meditation> fetchMeditationById(final Integer id) {
         return Optional.ofNullable(meditationDao.findById(id));
+    }
+
+    public Optional<UserMeditation> fetchUserMeditationById(final Integer id) {
+//        TODO: Find another way for this to be handled
+        return Optional.ofNullable(userMeditationDao.fetchById(id).get(0));
     }
 
     public List<Meditation> fetchMeditationByName(final String meditationName) {
@@ -119,9 +149,21 @@ public class MeditationService implements Service {
                                  .isAvailable(meditation.getAvailable());
     }
 
+    private UserMeditationResponse.UserMeditationResponseBuilder buildUserMeditationResponse(UserMeditation userMeditation) {
+        return UserMeditationResponse.builder()
+                                     .id(userMeditation.getId())
+                                     .meditationId(userMeditation.getMeditationId())
+                                     .userId(userMeditation.getUserId())
+                                     .userMeditationText(userMeditation.getUserMeditationText());
+    }
+
     @Override
     public ServiceType getType() {
         return ServiceType.MED;
     }
 
+    public Object updateUserMeditation(String userMeditationId, @Valid UserMeditationRequest meditationRequest) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
