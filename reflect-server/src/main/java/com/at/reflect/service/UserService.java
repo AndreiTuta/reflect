@@ -27,7 +27,7 @@ public class UserService implements Service {
                            .id(user.getId())
                            .created(user.getCreated().toString())
                            .email(user.getEmail())
-                           .last_updated(user.getLastUdpated())
+//                           .last_updated(user.getLastUdpated())
                            .name(user.getName())
                            .password(user.getPassword());
     }

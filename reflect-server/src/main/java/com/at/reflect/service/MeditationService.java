@@ -106,7 +106,7 @@ public class MeditationService implements Service {
 
     public Optional<UserMeditation> fetchUserMeditationById(final Integer id) {
 //        TODO: Find another way for this to be handled
-        return Optional.ofNullable(userMeditationDao.fetchById(id).get(0));
+        return Optional.ofNullable(userMeditationDao.fetchByMeditationId(id).get(0));
     }
 
     public List<Meditation> fetchMeditationByName(final String meditationName) {
@@ -151,7 +151,7 @@ public class MeditationService implements Service {
 
     private UserMeditationResponse.UserMeditationResponseBuilder buildUserMeditationResponse(UserMeditation userMeditation) {
         return UserMeditationResponse.builder()
-                                     .id(userMeditation.getId())
+                                     .id(userMeditation.getUserId())
                                      .meditationId(userMeditation.getMeditationId())
                                      .userId(userMeditation.getUserId())
                                      .userMeditationText(userMeditation.getUserMeditationText());

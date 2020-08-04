@@ -54,4 +54,6 @@ public class GlobalExceptionController {
         return errorResponseFactory.buildError(e);
     }
 
+//     Random exceptions that I got and should be handled asap
+//    [javax.validation.UnexpectedTypeException: HV000030: No validator could be found for constraint 'javax.validation.constraints.NotBlank' validating type 'java.lang.Boolean'. Check configuration for 'available']
 }
