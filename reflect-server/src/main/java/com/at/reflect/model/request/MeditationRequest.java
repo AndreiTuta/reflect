@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class MeditationRequest {
-
-    private String id;
     @NotBlank(message = "Meditation name is required")
     private String name;
     @NotBlank(message = "Meditation duration is required")
@@ -26,5 +24,4 @@ public class MeditationRequest {
     @NotNull(message = "isAvaliable is required")
     private Boolean isAvailable;
     private List<SubmeditationRequest> submeditations;
-
 }

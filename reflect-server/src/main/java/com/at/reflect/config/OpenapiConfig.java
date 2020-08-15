@@ -12,10 +12,9 @@ import io.swagger.v3.oas.annotations.info.Info;
                     version = "1.0.0",
                     contact = @Contact(
                         name = "Andrei Tuta",
-                        email = "" // TODO FILL IT OUT ANDREI
+                        email = "reflect.romania@gmail.com" 
                     ))
                   )
 //@formatter:on
 @Configuration
-public class OpenapiConfig {
-}
+public class OpenapiConfig {}

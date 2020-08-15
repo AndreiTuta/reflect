@@ -13,10 +13,12 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubmeditationResponse {
+public class EmailResponse {
 
-    private String meditationAudioadress;
-    private String meditationPlayerAdress;
+    private Integer id;
+    private Boolean available;
+    private String text;
     private String name;
-
+    private String address;
+    private String preview;
 }

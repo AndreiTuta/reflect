@@ -1,102 +1,70 @@
 package com.at.reflect.controller;
 
-import java.util.stream.StreamSupport;
+import javax.validation.Valid;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.util.HtmlUtils;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.at.reflect.model.email.repository.EmailRepository;
-import com.at.reflect.model.entity.Email;
+import com.at.reflect.error.exception.NotFoundException;
+import com.at.reflect.model.request.EmailRequest;
+import com.at.reflect.model.response.EmailResponse;
+import com.at.reflect.service.EmailService;
 
-/**
- *
- * @author at
- */
-@Controller
-public class EmailController
-{
-    @Autowired
-    private EmailRepository emailRepository;
-    // Constants
-    private final String INVALID_CRED = "No param passed. Nothing has been executed";
-    private final String ENDPOINT = "/api/emails/";
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-    @RequestMapping(value = ENDPOINT, method = RequestMethod.POST)
-    @ResponseBody
-    public String addEmail(@RequestParam final String emailBody,
-            @RequestParam final String emailType,
-            @RequestParam final boolean isTemplate)
-    {
-        if (!StringUtils.isEmpty(emailBody))
-        {
-            Email email = updateEmail(0, emailBody, emailType, isTemplate);
-            return "Saved email " + email.toString();
-        }
-        return INVALID_CRED;
+@RestController
+@RequestMapping(value = "/v1/email")
+@Slf4j
+@RequiredArgsConstructor
+@Tag(name = "Email API", description = "Rest API to interact with Email")
+public class EmailController {
 
+    private final EmailService emailService;
+
+    @Operation(summary = "Add a Email")
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmailResponse> addEmail(@Valid @RequestBody EmailRequest emailRequest) {
+        log.debug("Creating new email...");
+        return ResponseEntity.status(HttpStatus.CREATED).body(emailService.createEmail(emailRequest));
     }
 
-    @RequestMapping(value = ENDPOINT + "{emailType}", method = RequestMethod.GET)
-    @ResponseBody
-    public String fetchEmail(@PathVariable(value = "emailType") String emailType)
-    {
-        if (!StringUtils.isEmpty(emailType))
-        {
-            Email email = StreamSupport.stream(emailRepository.findAll().spliterator(), false)
-                    .filter(em -> em.getEmailType().equals(emailType)).findAny().orElse(null);
-            if (email != null)
-            {
-                return "Retrieved email: " + email.toString();
-            } else
-            {
-                return "Failed returning a email for provided params.";
-            }
-        }
-        return INVALID_CRED;
+    @Operation(summary = "Fetch Email by ID")
+    @GetMapping(value = "/{emailId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmailResponse> fetchEmail(@PathVariable String emailId) throws NotFoundException {
+        log.debug("Fetching email...");
+        return ResponseEntity.ok(emailService.fetchEmailById(emailId));
     }
 
-    @RequestMapping(value = ENDPOINT + "{id}", method = RequestMethod.PUT)
-    @ResponseBody
-    public String udpateEmail(@PathVariable(value = "id") final String id,
-            @RequestParam final String emailBody,
-            @RequestParam final String emailType,
-            @RequestParam final boolean isTemplate)
-    {
-        if (!StringUtils.isEmpty(id))
-        {
-			Email email = emailRepository.findById(Integer.valueOf(id)).orElse(null);
-            if (email != null)
-            {
-                Email updatedEmail = updateEmail(email.getId(), emailBody, emailType, isTemplate);
-                return "Updated email: " + updatedEmail.toString();
-            } else
-            {
-                return "Failed returning a user for provided credentials.";
-            }
-        }
-        return INVALID_CRED;
+    @Operation(summary = "Update Email by ID")
+    @PutMapping(value = "/{emailId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void udpateEmail(@PathVariable String emailId, @RequestBody @Valid EmailRequest emailRequest)
+                                                                                                         throws NotFoundException {
+        log.debug("Updating email...");
+        emailService.updateEmail(emailId, emailRequest);
     }
 
-    private Email updateEmail(Integer id, String emailBody, String emailType,
-            boolean template)
-    {
-        Email email = new Email();
-        if (id > 0)
-        {
-            email.setId(id);
-        }
-        email.setEmailBody(HtmlUtils.htmlEscape(emailBody));
-        email.setEmailType(emailType);
-        email.setTemplate(template);
-        emailRepository.save(email);
-        return email;
+    @Operation(summary = "Delete Email by ID")
+    @DeleteMapping(value = "/{emailId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public ResponseEntity<EmailResponse> del(@PathVariable String emailId, @RequestBody @Valid EmailRequest emailRequest)
+                                                                                                 throws NotFoundException {
+        log.debug("Updating email...");
+        emailService.updateEmail(emailId, emailRequest);
+        return ResponseEntity.ok(emailService.delete(emailId));
     }
+
 }

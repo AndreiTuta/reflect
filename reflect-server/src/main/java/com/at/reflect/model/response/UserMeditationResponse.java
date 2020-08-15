@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubmeditationResponse {
+public class UserMeditationResponse {
 
-    private String meditationAudioadress;
-    private String meditationPlayerAdress;
-    private String name;
-
+    private Integer meditationId;
+    private Integer userId;
+    private String userMeditationText;
+    private Integer id;
 }
