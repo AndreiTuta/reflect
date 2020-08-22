@@ -1,7 +1,6 @@
 package com.at.reflect.model.response;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -19,12 +18,8 @@ import lombok.NoArgsConstructor;
 public class PaymentResponse {
 
     private Integer id;
-    private Boolean isAvailable;
-    private String duration;
-    private String name;
-    private String address;
-    private Integer numMed;
-    private String preview;
-    @Builder.Default
-    private List<SubmeditationResponse> submeditations = new ArrayList<>();
+    private String customerId;
+    private String transactionId;
+    private LocalDateTime created;
+    private String amount;
 }

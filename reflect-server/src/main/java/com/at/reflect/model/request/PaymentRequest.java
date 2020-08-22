@@ -1,6 +1,6 @@
 package com.at.reflect.model.request;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,17 +11,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PaymentRequest {
-    @NotBlank(message = "Meditation name is required")
-    private String name;
-    @NotBlank(message = "Meditation duration is required")
-    private String duration;
-    @NotBlank(message = "Meditation address is required")
-    private String address;
-    @NotBlank(message = "Meditation num of meditation is required")
-    private String numMed;
-    @NotBlank(message = "preview is required")
-    private String preview;
-    @NotNull(message = "isAvaliable is required")
-    private Boolean isAvailable;
-    private List<SubmeditationRequest> submeditations;
+
+    private Integer id;
+    @NotNull(message = "customerid is required")
+    private String customerId;
+    @NotBlank(message = "transactionid is required")
+    private String transactionId;
+    private LocalDateTime created;
+    @NotBlank(message = "amount is required")
+    private String amount;
 }
