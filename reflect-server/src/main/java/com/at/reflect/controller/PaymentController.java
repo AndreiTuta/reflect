@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.at.reflect.error.exception.NotFoundException;
@@ -50,21 +49,18 @@ public class PaymentController {
 
     @Operation(summary = "Update Payment by ID")
     @PutMapping(value = "/{paymentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void udpatePayment(@PathVariable String paymentId, @RequestBody @Valid PaymentRequest paymentRequest)
-                                                                                                         throws NotFoundException {
+                                                                                                                 throws NotFoundException {
         log.debug("Updating payment...");
         paymentService.updatePayment(paymentId, paymentRequest);
     }
 
     @Operation(summary = "Delete Payment by ID")
     @DeleteMapping(value = "/{paymentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ResponseEntity<PaymentResponse> del(@PathVariable String paymentId, @RequestBody @Valid PaymentRequest paymentRequest)
-                                                                                                 throws NotFoundException {
+    public ResponseEntity<PaymentResponse> del(@PathVariable String paymentId)
+                                                                               throws NotFoundException {
         log.debug("Updating payment...");
-        paymentService.updatePayment(paymentId, paymentRequest);
-        return ResponseEntity.ok(paymentService.delete(paymentId));
+        return ResponseEntity.status(HttpStatus.GONE).body(paymentService.delete(paymentId));
     }
 
 }

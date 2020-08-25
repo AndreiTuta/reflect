@@ -12,7 +12,6 @@ import com.at.reflect.error.exception.NotFoundException;
 import com.at.reflect.error.exception.PathException;
 import com.at.reflect.model.request.PaymentRequest;
 import com.at.reflect.model.response.PaymentResponse;
-import com.reflect.generated.tables.pojos.Meditation;
 import com.reflect.generated.tables.pojos.Payment;
 
 import lombok.RequiredArgsConstructor;
@@ -53,9 +52,17 @@ public class PaymentService implements Service {
         }
     }
 
-    public PaymentResponse delete(String paymentId) {
-        // TODO Auto-generated method stub
-        return null;
+    public PaymentResponse delete(String paymentId) throws NotFoundException {
+        try {
+            int id = Integer.parseInt(paymentId);
+            Payment formerPayment = fetchOptionalPaymentById(id)
+                                   .orElseThrow(() -> new NotFoundException("Payment with id: " + paymentId + " not found"));
+            paymentDao.delete(formerPayment);
+            return buildPaymentResponse(formerPayment).build();
+            
+        } catch (NumberFormatException e) {
+            throw new PathException("meditationId on path must be an integer");
+        }
     }
 
     public PaymentResponse fetchPaymentById(String paymentId) throws NotFoundException {
