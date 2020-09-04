@@ -69,12 +69,13 @@ public class MeditationService implements Service {
         }
     }
 
-    public UserMeditationResponse fetchUserMeditationById(String userMeditationId) throws NotFoundException {
+    public UserMeditationResponse fetchUserMeditationById(String userMeditationId, String userId) throws NotFoundException {
         try {
-            int id = Integer.parseInt(userMeditationId);
-            final UserMeditation userMeditation = fetchUserMeditationById(id)
-                                                                             .orElseThrow(() -> new NotFoundException("User meditation with id: "
-                                                                                 + userMeditationId + " not found"));
+            int userMedIntId = Integer.parseInt(userMeditationId);
+            int userIntId = Integer.parseInt(userId);
+            final UserMeditation userMeditation = fetchUserMeditationByIds(userMedIntId, userIntId)
+                                                                                                   .orElseThrow(() -> new NotFoundException("User meditation with id: "
+                                                                                                       + userMeditationId + " not found"));
             return buildUserMeditationResponse(userMeditation).build();
         } catch (NumberFormatException e) {
             throw new PathException("meditationId on path must be an integer");
@@ -104,24 +105,20 @@ public class MeditationService implements Service {
         return Optional.ofNullable(meditationDao.findById(id));
     }
 
-    public Optional<UserMeditation> fetchUserMeditationById(final Integer id) {
-//        TODO: Find another way for this to be handled
-        return Optional.ofNullable(userMeditationDao.fetchByMeditationId(id).get(0));
+    public Optional<UserMeditation> fetchUserMeditationByIds(final int medId, final int userIntId) {
+        return Optional.ofNullable(userMeditationDao.fetchUserMeditationByIds(medId, userIntId));
     }
 
     public List<Meditation> fetchMeditationByName(final String meditationName) {
         return meditationDao.fetchByName(meditationName);
     }
 
-    
-    
 //    
 //    ???
 //    ???
 //    ???
 //    
-    
-    
+
     public void updateMeditation(final Meditation meditation) {
         meditationDao.update(meditation);
     }
@@ -160,7 +157,6 @@ public class MeditationService implements Service {
 
     private UserMeditationResponse.UserMeditationResponseBuilder buildUserMeditationResponse(UserMeditation userMeditation) {
         return UserMeditationResponse.builder()
-                                     .id(userMeditation.getUserId())
                                      .meditationId(userMeditation.getMeditationId())
                                      .userId(userMeditation.getUserId())
                                      .userMeditationText(userMeditation.getUserMeditationText());
@@ -171,22 +167,35 @@ public class MeditationService implements Service {
         return ServiceType.MED;
     }
 
-    public UserMeditationResponse updateUserMeditation(String userMeditationId, @Valid UserMeditationRequest userMeditationRequest) throws NotFoundException {
+    public UserMeditationResponse updateUserMeditation(String userMeditationId, String userId,
+                                                       @Valid UserMeditationRequest userMeditationRequest) throws NotFoundException {
         try {
-            int id = Integer.parseInt(userMeditationId);
-            fetchUserMeditationById(id)
-                                   .orElseThrow(() -> new NotFoundException("User meditation with id: " + userMeditationId + " not found"));
-
-            final UserMeditation userMeditation = modelMapper.map(userMeditationRequest, UserMeditation.class);
-            userMeditationDao.delete(userMeditation);
+            int userMedIntId = Integer.parseInt(userMeditationId);
+            int userIntId = Integer.parseInt(userId);
+            final UserMeditation userMeditation = fetchUserMeditationByIds(userMedIntId, userIntId)
+                                                                                                   .orElseThrow(() -> new NotFoundException("User meditation with id: "
+                                                                                                       + userMeditationId
+                                                                                                       + " not found"));
+            final UserMeditation updatedUserMeditation = modelMapper.map(userMeditationRequest, UserMeditation.class);
+            userMeditationDao.update(updatedUserMeditation);
             return buildUserMeditationResponse(userMeditation).build();
         } catch (NumberFormatException e) {
             throw new PathException("meditationId on path must be an integer");
         }
     }
 
-    public UserMeditationResponse delete(String userMeditationId) {
-//        buildUserMeditationResponse
-        return null;
+    public UserMeditationResponse delete(String userMeditationId, String userId) throws NotFoundException {
+        try {
+            int userMedIntId = Integer.parseInt(userMeditationId);
+            int userIntId = Integer.parseInt(userId);
+            final UserMeditation userMeditation = fetchUserMeditationByIds(userMedIntId, userIntId)
+                                                                                                   .orElseThrow(() -> new NotFoundException("User meditation with id: "
+                                                                                                       + userMeditationId
+                                                                                                       + " not found"));
+            userMeditationDao.deleteUserMeditation(userMeditation);
+            return buildUserMeditationResponse(userMeditation).build();
+        } catch (NumberFormatException e) {
+            throw new PathException("meditationId on path must be an integer");
+        }
     }
 }

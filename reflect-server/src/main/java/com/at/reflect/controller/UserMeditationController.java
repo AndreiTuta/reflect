@@ -41,27 +41,30 @@ public class UserMeditationController {
     }
 
     @Operation(summary = "Fetch user-mediation information by ID")
-    @GetMapping(value = "/{userMeditationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserMeditationResponse> fetchUserMeditation(@PathVariable String userMeditationId,@PathVariable String userId)
-                                                                                                             throws NotFoundException {
+    @GetMapping(value = "/{userId}/{userMeditationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserMeditationResponse> fetchUserMeditation(@PathVariable String userMeditationId, @PathVariable String userId)
+                                                                                                                                          throws NotFoundException {
         log.debug("Fetching user meditation...");
-        return ResponseEntity.ok(meditationService.fetchUserMeditationById(userMeditationId));
+        return ResponseEntity.ok(meditationService.fetchUserMeditationById(userMeditationId, userId));
     }
 
     @Operation(summary = "Update userMeditation by ID")
-    @PutMapping(value = "/{userMeditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void udpateuserMeditation(@PathVariable String userMeditationId, @RequestBody @Valid UserMeditationRequest userMeditationRequest)
-                                                                                                                                             throws NotFoundException {
+    @PutMapping(value = "/{userId}/{userMeditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserMeditationResponse> udpateuserMeditation(@PathVariable String userMeditationId, @PathVariable String userId,
+                                                                       @RequestBody @Valid UserMeditationRequest userMeditationRequest)
+                                                                                                                                        throws NotFoundException {
         log.debug("Updating userMeditation...");
-        meditationService.updateUserMeditation(userMeditationId, userMeditationRequest);
+
+        return ResponseEntity.ok(meditationService.updateUserMeditation(userMeditationId, userId, userMeditationRequest));
     }
 
     @Operation(summary = "Delete userMeditation by ID")
-    @DeleteMapping(value = "/{userMeditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserMeditationResponse> del(@PathVariable String userMeditationId)
-                                                                                             throws NotFoundException {
+    @DeleteMapping(value = "/{userId}/{userMeditationId}", consumes = MediaType.APPLICATION_JSON_VALUE,
+                   produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserMeditationResponse> del(@PathVariable String userMeditationId, @PathVariable String userId)
+                                                                                                                          throws NotFoundException {
         log.debug("Updating userMeditation...");
-        return ResponseEntity.status(HttpStatus.GONE).body(meditationService.delete(userMeditationId));
+        return ResponseEntity.status(HttpStatus.GONE).body(meditationService.delete(userId, userMeditationId));
     }
 
 }

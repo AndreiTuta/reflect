@@ -37,4 +37,11 @@ public class UserMeditationDao extends com.reflect.generated.tables.daos.UserMed
                                                        .and(Tables.USER_MEDITATION.MEDITATION_ID.eq(userMeditation.getMeditationId())))
                   .execute() > 0;
     }
+
+    public UserMeditation fetchUserMeditationByIds(int medId, int userIntId) {
+        return dsl.selectFrom(Tables.USER_MEDITATION)
+                  .where(Tables.USER_MEDITATION.USER_ID.eq(userIntId)
+                                                       .and(Tables.USER_MEDITATION.MEDITATION_ID.eq(medId)))
+                  .fetchOneInto(UserMeditation.class);
+    }
 }
