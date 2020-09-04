@@ -5,9 +5,11 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,18 +42,26 @@ public class UserMeditationController {
 
     @Operation(summary = "Fetch user-mediation information by ID")
     @GetMapping(value = "/{userMeditationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserMeditationResponse> fetchUserMeditation(@PathVariable String userMeditationId)
+    public ResponseEntity<UserMeditationResponse> fetchUserMeditation(@PathVariable String userMeditationId,@PathVariable String userId)
                                                                                                              throws NotFoundException {
         log.debug("Fetching user meditation...");
         return ResponseEntity.ok(meditationService.fetchUserMeditationById(userMeditationId));
     }
 
-//    @Operation(summary = "Update user-mediation by ID")
-//    @PutMapping(value = "/{userMeditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-//    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-//    public ResponseEntity<UserMeditationResponse> udpateUserMeditation(@PathVariable String userMeditationId,
-//                                                                       @RequestBody @Valid UserMeditationRequest meditationRequest) throws NotFoundException {
-//        log.debug("Updating meditation...");
-//        return ResponseEntity.ok(meditationService.updateUserMeditation(userMeditationId, meditationRequest));
-//    }
+    @Operation(summary = "Update userMeditation by ID")
+    @PutMapping(value = "/{userMeditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void udpateuserMeditation(@PathVariable String userMeditationId, @RequestBody @Valid UserMeditationRequest userMeditationRequest)
+                                                                                                                                             throws NotFoundException {
+        log.debug("Updating userMeditation...");
+        meditationService.updateUserMeditation(userMeditationId, userMeditationRequest);
+    }
+
+    @Operation(summary = "Delete userMeditation by ID")
+    @DeleteMapping(value = "/{userMeditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserMeditationResponse> del(@PathVariable String userMeditationId)
+                                                                                             throws NotFoundException {
+        log.debug("Updating userMeditation...");
+        return ResponseEntity.status(HttpStatus.GONE).body(meditationService.delete(userMeditationId));
+    }
+
 }

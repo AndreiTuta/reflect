@@ -171,8 +171,22 @@ public class MeditationService implements Service {
         return ServiceType.MED;
     }
 
-    public Object updateUserMeditation(String userMeditationId, @Valid UserMeditationRequest meditationRequest) {
-        // TODO Auto-generated method stub
+    public UserMeditationResponse updateUserMeditation(String userMeditationId, @Valid UserMeditationRequest userMeditationRequest) throws NotFoundException {
+        try {
+            int id = Integer.parseInt(userMeditationId);
+            fetchUserMeditationById(id)
+                                   .orElseThrow(() -> new NotFoundException("User meditation with id: " + userMeditationId + " not found"));
+
+            final UserMeditation userMeditation = modelMapper.map(userMeditationRequest, UserMeditation.class);
+            userMeditationDao.delete(userMeditation);
+            return buildUserMeditationResponse(userMeditation).build();
+        } catch (NumberFormatException e) {
+            throw new PathException("meditationId on path must be an integer");
+        }
+    }
+
+    public UserMeditationResponse delete(String userMeditationId) {
+//        buildUserMeditationResponse
         return null;
     }
 }
