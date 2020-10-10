@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping(value = "/v1/user-meditation")
+@RequestMapping(value = "/v1/userMeditation")
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "UserMeditation API", description = "Rest API to interact with UserMediation")
@@ -33,14 +33,14 @@ public class UserMeditationController {
 
     private final MeditationService meditationService;
 
-    @Operation(summary = "Insert user mediation ")
+    @Operation(summary = "Insert user mediation")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserMeditationResponse> addUserMeditation(@Valid @RequestBody UserMeditationRequest userMeditationRequest) {
         log.debug("Creating new meditation...");
         return ResponseEntity.status(HttpStatus.CREATED).body(meditationService.createUserMeditation(userMeditationRequest));
     }
 
-    @Operation(summary = "Fetch user-mediation information by ID")
+    @Operation(summary = "Fetch user-mediation information by IDs")
     @GetMapping(value = "/{userId}/{userMeditationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserMeditationResponse> fetchUserMeditation(@PathVariable String userMeditationId, @PathVariable String userId)
                                                                                                                                           throws NotFoundException {
@@ -48,7 +48,7 @@ public class UserMeditationController {
         return ResponseEntity.ok(meditationService.fetchUserMeditationById(userMeditationId, userId));
     }
 
-    @Operation(summary = "Update userMeditation by ID")
+    @Operation(summary = "Update userMeditation by IDs")
     @PutMapping(value = "/{userId}/{userMeditationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserMeditationResponse> udpateuserMeditation(@PathVariable String userMeditationId, @PathVariable String userId,
                                                                        @RequestBody @Valid UserMeditationRequest userMeditationRequest)
@@ -58,7 +58,7 @@ public class UserMeditationController {
         return ResponseEntity.ok(meditationService.updateUserMeditation(userMeditationId, userId, userMeditationRequest));
     }
 
-    @Operation(summary = "Delete userMeditation by ID")
+    @Operation(summary = "Delete userMeditation by IDs")
     @DeleteMapping(value = "/{userId}/{userMeditationId}", consumes = MediaType.APPLICATION_JSON_VALUE,
                    produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserMeditationResponse> del(@PathVariable String userMeditationId, @PathVariable String userId)

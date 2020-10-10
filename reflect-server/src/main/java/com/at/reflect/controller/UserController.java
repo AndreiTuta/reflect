@@ -44,7 +44,7 @@ public class UserController {
     @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponse> fetchUser(@PathVariable String userId) throws NotFoundException {
         log.debug("Fetching user...");
-        return ResponseEntity.ok(userService.fetchUserById(userId));
+        return ResponseEntity.ok(userService.fetchUserResponseById(userId));
     }
 
     @Operation(summary = "Update User by ID")
