@@ -15,9 +15,33 @@ public class UserMeditationDao extends com.reflect.generated.tables.daos.UserMed
         this.dsl = dsl;
     }
 
-    public void insertUserMeditation(UserMeditation userMeditation) {
-        dsl.insertInto(Tables.USER_MEDITATION)
-           .values(userMeditation)
-           .execute();
+    public boolean updateUserMeditation(UserMeditation userMeditation) {
+        return dsl.update(Tables.USER_MEDITATION)
+                  .set(Tables.USER_MEDITATION.USER_ID, userMeditation.getUserId())
+                  .set(Tables.USER_MEDITATION.USER_MEDITATION_TEXT, userMeditation.getUserMeditationText())
+                  .set(Tables.USER_MEDITATION.MEDITATION_ID, userMeditation.getMeditationId())
+                  .execute() > 0;
+    }
+
+    public boolean insertUserMeditation(UserMeditation userMeditation) {
+        return dsl.insertInto(Tables.USER_MEDITATION)
+                  .set(Tables.USER_MEDITATION.USER_ID, userMeditation.getUserId())
+                  .set(Tables.USER_MEDITATION.USER_MEDITATION_TEXT, userMeditation.getUserMeditationText())
+                  .set(Tables.USER_MEDITATION.MEDITATION_ID, userMeditation.getMeditationId())
+                  .execute() > 0;
+    }
+
+    public boolean deleteUserMeditation(UserMeditation userMeditation) {
+        return dsl.deleteFrom(Tables.USER_MEDITATION)
+                  .where(Tables.USER_MEDITATION.USER_ID.eq(userMeditation.getUserId())
+                                                       .and(Tables.USER_MEDITATION.MEDITATION_ID.eq(userMeditation.getMeditationId())))
+                  .execute() > 0;
+    }
+
+    public UserMeditation fetchUserMeditationByIds(int medId, int userIntId) {
+        return dsl.selectFrom(Tables.USER_MEDITATION)
+                  .where(Tables.USER_MEDITATION.USER_ID.eq(userIntId)
+                                                       .and(Tables.USER_MEDITATION.MEDITATION_ID.eq(medId)))
+                  .fetchOneInto(UserMeditation.class);
     }
 }

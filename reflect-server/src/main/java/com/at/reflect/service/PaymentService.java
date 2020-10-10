@@ -41,7 +41,7 @@ public class PaymentService implements Service {
         try {
             int id = Integer.parseInt(paymentId);
             fetchOptionalPaymentById(id)
-                                   .orElseThrow(() -> new NotFoundException("Payment with id: " + paymentId + " not found"));
+                                        .orElseThrow(() -> new NotFoundException("Payment with id: " + paymentId + " not found"));
 
             final Payment payment = modelMapper.map(paymentRequest, Payment.class);
             payment.setId(id);
@@ -56,10 +56,11 @@ public class PaymentService implements Service {
         try {
             int id = Integer.parseInt(paymentId);
             Payment formerPayment = fetchOptionalPaymentById(id)
-                                   .orElseThrow(() -> new NotFoundException("Payment with id: " + paymentId + " not found"));
+                                                                .orElseThrow(() -> new NotFoundException("Payment with id: " + paymentId
+                                                                    + " not found"));
             paymentDao.delete(formerPayment);
             return buildPaymentResponse(formerPayment).build();
-            
+
         } catch (NumberFormatException e) {
             throw new PathException("meditationId on path must be an integer");
         }
@@ -86,5 +87,4 @@ public class PaymentService implements Service {
         paymentDao.insert(payment);
         return buildPaymentResponse(payment).build();
     }
-
 }

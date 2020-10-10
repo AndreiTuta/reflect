@@ -18,5 +18,4 @@ public class UserMeditationResponse {
     private Integer meditationId;
     private Integer userId;
     private String userMeditationText;
-    private Integer id;
 }

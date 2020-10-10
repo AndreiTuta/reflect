@@ -1,5 +1,6 @@
 package com.at.reflect.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -27,7 +28,7 @@ public class UserService implements Service {
                            .id(user.getId())
                            .created(user.getCreated().toString())
                            .email(user.getEmail())
-//                           .last_updated(user.getLastUdpated())
+                           .last_updated(user.getModified().toString())
                            .name(user.getName())
                            .password(user.getPassword());
     }
@@ -43,12 +44,23 @@ public class UserService implements Service {
         return buildUserResponse(user).build();
     }
 
-    public void updateUser(String userId, @Valid UserRequest userRequest) {
-        // TODO Auto-generated method stub
-
+    public UserResponse updateUser(String userId, @Valid UserRequest userRequest) throws NotFoundException {
+        try {
+            int id = Integer.parseInt(userId);
+            final User user = fetchUserById(id)
+                                               .orElseThrow(() -> new NotFoundException("User with id: " + userId + " not found"));
+            user.setEmail(userRequest.getEmail());
+            user.setPassword(userRequest.getPassword());
+            user.setName(userRequest.getName());
+            user.setModified(LocalDateTime.now());
+            userDao.update(user);
+            return buildUserResponse(user).build();
+        } catch (NumberFormatException e) {
+            throw new PathException("meditationId on path must be an integer");
+        }
     }
 
-    public UserResponse fetchUserById(String userId) throws NotFoundException {
+    public UserResponse fetchUserResponseById(String userId) throws NotFoundException {
         try {
             int id = Integer.parseInt(userId);
             final User user = fetchUserById(id)
