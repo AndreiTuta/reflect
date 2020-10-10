@@ -2,11 +2,13 @@ package com.at.reflect.model.request;
 
 import javax.validation.constraints.NotBlank;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserRequest {
     private String created;
     @NotBlank(message = "User email is required")
